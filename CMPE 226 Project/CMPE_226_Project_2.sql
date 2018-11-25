@@ -36,7 +36,7 @@ primary key(ca_id)
 
 create table customer 
 (
-customer_id int not null,
+customer_id int not null AUTO_INCREMENT,
 email_id varchar(200) not null,
 customer_name char(200) not null,
 customer_password varchar(200) not null,
