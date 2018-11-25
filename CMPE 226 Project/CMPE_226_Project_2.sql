@@ -29,10 +29,10 @@ Primary key (order_id)
 create table CA
 (
 ca_id int not null,
-email_id varchar(20) not null,
-ca_name char(20) not null,
+email_id varchar(200) not null,
+ca_name char(200) not null,
 ca_bank_account int not null,
-ca_password varchar(20) not null,
+ca_password varchar(200) not null,
 primary key(ca_id)
 );
 
