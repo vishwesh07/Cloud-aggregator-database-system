@@ -1,7 +1,5 @@
-# drop database multicloud;
-
+drop database if exists multicloud;
 create database multicloud;
-
 use multicloud;
 
 create table Csp
