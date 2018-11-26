@@ -203,14 +203,14 @@ alter table onboards add constraint fk_onboards_customer_id foreign key (custome
 # alter table attached add constraint fk_attached_offer_id foreign key (offer_id) references offer(offer_id);
 
 alter table order_ add bill_id int not null;
-alter table order_ add constraint fk_bill_id foreign key (bill_id) references bill(bill_id);
+alter table order_ add constraint fk_order_bill_id foreign key (bill_id) references bill(bill_id);
 alter table order_ add cpu_cores int not null;
 alter table order_ add ram int not null;
 alter table order_ add disk_size int not null;
 alter table order_ add order_end_date date not null;
 alter table customer add offer_id int not null;
 
-alter table customer add constraint fk_offer_id foreign key (offer_id) references offer(offer_id);
+alter table customer add constraint fk_customer_offer_id foreign key (offer_id) references offer(offer_id);
 
 alter table bill add month int not null;
 alter table bill add year int not null;
