@@ -1,6 +1,5 @@
 $(function() {
     $('document').ready(function() {
-
         $.ajax({
             url: '/login',
             data: $('form').serialize(),

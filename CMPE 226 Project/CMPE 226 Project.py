@@ -29,6 +29,22 @@ def showLogin():
 def showCustomerAccountDisplay():
     return render_template('customerAccountDisplay.html')
 
+@app.route('/showOrderHistory')
+def showOrderHistory():
+    return render_template('orderHistory.html')
+
+@app.route('/showBilling')
+def showBilling():
+    return render_template('billing.html')
+
+@app.route('/showProfile')
+def showProfile():
+    return render_template('profile.html')
+
+@app.route('/showHelp')
+def showHelp():
+    return render_template('help.html')
+
 @app.route('/myCSPs', methods=['GET'])
 def myCSPs():
     try:
@@ -76,4 +92,4 @@ def signUp():
     #     conn.close()
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
