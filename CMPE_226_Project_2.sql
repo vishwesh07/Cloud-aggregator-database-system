@@ -1,4 +1,4 @@
-# drop database multicloud;
+ drop database multicloud;
 
 create database multicloud;
 
@@ -7,49 +7,13 @@ use multicloud;
 create table csp
 ( 
   csp_id int not null auto_increment,
-  email_id varchar(255)  not null,
+  csp_email_id varchar(255)  not null,
   csp_name varchar(255) not null,
   csp_password varchar(255) not null,
   csp_join_date date not null,
   csp_bank_account_number int not null,
   primary key (csp_id)
 );
-
-delimiter $$
-create definer=`root`@`localhost` procedure `sp_create_csp`(
-    in c_email_id varchar(200),
-    in c_name varchar(200),
-    in c_password varchar(200),
-    in c_join_date date,
-    in c_bank_account_number int
-)
-begin
-    if ( select exists (select 1 from csp where email_id = c_email_id) ) then
-
-        select 'username exists !!';
-
-    else
-
-        insert into csp
-        (
-            email_id,
-			csp_name,
-			csp_password,
-			csp_join_date,
-			csp_bank_account_number
-        )
-        values
-        (
-            c_email_id,
-			c_name,
-			c_password,
-			c_join_date,
-			c_bank_account_number
-        );
-
-    end if;
-end$$
-delimiter ;
  
 create table order_
 (
@@ -65,7 +29,7 @@ primary key (order_id)
 create table ca
 (
 ca_id int not null auto_increment,
-email_id varchar(255) not null,
+ca_email_id varchar(255) not null,
 ca_name char(255) not null,
 ca_bank_account int not null,
 ca_password varchar(255) not null,
@@ -75,49 +39,13 @@ primary key(ca_id)
 create table customer 
 (
 customer_id int not null auto_increment,
-email_id varchar(255) not null,
+customer_email_id varchar(255) not null,
 customer_name char(255) not null,
 customer_password varchar(255) not null,
-join_date date not null,
+customer_join_date date not null,
 customer_bank_account int(16) not null,
 primary key(customer_id)
 );
-
-delimiter $$
-create definer=`root`@`localhost` procedure `sp_create_user`(
-    in sp_email_id varchar(255),
-    in sp_name varchar(255),
-    in sp_password varchar(255),
-    in sp_join_date date,
-    in sp_bank_account_number int
-)
-begin
-    if ( select exists (select 1 from customer where email_id = sp_email_id) ) then
-     
-        select 'username exists !!';
-     
-    else
-     
-        insert into customer
-        (
-            email_id,
-			customer_name,
-			customer_password,
-			join_date,
-			customer_bank_account
-        )
-        values
-        (
-            sp_email_id,
-			sp_name,
-			sp_password,
-			sp_join_date,
-			sp_bank_account_number
-        );
-     
-    end if;
-end$$
-delimiter ;
 
 create table bill
 (
@@ -208,9 +136,9 @@ alter table order_ add cpu_cores int not null;
 alter table order_ add ram int not null;
 alter table order_ add disk_size int not null;
 alter table order_ add order_end_date date not null;
-alter table customer add offer_id int not null;
 
-alter table customer add constraint fk_customer_offer_id foreign key (offer_id) references offer(offer_id);
+alter table customer add customer_offer_id int;
+alter table customer add constraint fk_customer_offer_id foreign key (customer_offer_id)  references offer(offer_id);
 
 alter table bill add month int not null;
 alter table bill add year int not null;
@@ -251,3 +179,78 @@ insert into ca values(4324323,'fdfds@gmail.com','hgh',5454545, 'dfdfe');
 # insert into avails values(234234, 34324, '2018-09-09');
 # insert into avails values(34344, 646456, '2017-08-08');
 # insert into avails values(656546, 7766677, '2016-11-11');
+
+delimiter $$
+create definer=`root`@`localhost` procedure `sp_create_user`(
+    in sp_email_id varchar(255),
+    in sp_name varchar(255),
+    in sp_password varchar(255),
+    in sp_join_date date,
+    in sp_bank_account_number int,
+    in sp_offer_id int
+)
+begin
+    if ( select exists (select 1 from customer where customer_email_id = sp_email_id) ) then
+     
+        select 'username exists !!';
+     
+    else
+     
+        insert into customer
+        (
+            customer_email_id,
+			customer_name,
+			customer_password,
+			customer_join_date,
+			customer_bank_account,
+            customer_offer_id
+        )
+        values
+        (
+            sp_email_id,
+			sp_name,
+			sp_password,
+			sp_join_date,
+			sp_bank_account_number,
+            null
+        );
+     
+    end if;
+end$$
+delimiter ;
+
+delimiter $$
+create definer=`root`@`localhost` procedure `sp_create_csp`(
+    in c_email_id varchar(200),
+    in c_name varchar(200),
+    in c_password varchar(200),
+    in c_join_date date,
+    in c_bank_account_number int
+)
+begin
+    if ( select exists (select 1 from csp where csp_email_id = c_email_id) ) then
+
+        select 'username exists !!';
+
+    else
+
+        insert into csp
+        (
+            csp_email_id,
+			csp_name,
+			csp_password,
+			csp_join_date,
+			csp_bank_account_number
+        )
+        values
+        (
+            c_email_id,
+			c_name,
+			c_password,
+			c_join_date,
+			c_bank_account_number
+        );
+
+    end if;
+end$$
+delimiter ;
