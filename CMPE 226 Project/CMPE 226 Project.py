@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, json
 from flaskext.mysql import MySQL
 from werkzeug import generate_password_hash, check_password_hash
+from crud import sql_select, sql_delete, sql_update, sql_insert
 
 app = Flask(__name__)
 mysql = MySQL()
@@ -27,6 +28,17 @@ def showLogin():
 @app.route('/showCustomerAccountDisplay')
 def showCustomerAccountDisplay():
     return render_template('customerAccountDisplay.html')
+
+@app.route('/myCSPs', methods=['GET'])
+def myCSPs():
+    try:
+        ca_id = request.args['ca_id']
+        if ca_id:
+            return json.dumps({'results': sql_select('select * from Csp;')})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
 
 @app.route('/signUp', methods=['POST', 'GET'])
 def signUp():
