@@ -24,6 +24,10 @@ def showSignUp():
 def showLogin():
     return render_template('login.html')
 
+@app.route('/showCustomerAccountDisplay')
+def showCustomerAccountDisplay():
+    return render_template('customerAccountDisplay.html')
+
 @app.route('/signUp', methods=['POST', 'GET'])
 def signUp():
     try:
