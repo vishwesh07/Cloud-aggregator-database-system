@@ -6,7 +6,7 @@ use multicloud;
 
 create table Csp
 ( 
-  Csp_id int not null,
+  Csp_id int not null auto_increment,
   Email_id  varchar(200)  not null,
   Csp_Name varchar(200) not null,
   Csp_Password varchar(200) not null,
@@ -14,6 +14,43 @@ create table Csp
   Csp_bank_account_number int not null,
   Primary Key (Csp_id)
 );
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_createCsp`(
+    IN c_email_id varchar(200),
+    IN c_name VARCHAR(200),
+    IN c_password varchar(200),
+    IN c_join_date date,
+    IN c_bank_account_number int
+)
+BEGIN
+    if ( select exists (select 1 from Csp where Email_id = c_email_id) ) THEN
+
+        select 'Username Exists !!';
+
+    ELSE
+
+        insert into Csp
+        (
+            Email_id,
+			Csp_Name,
+			Csp_Password,
+			Csp_Join_Date,
+			Csp_bank_account_number
+        )
+        values
+        (
+            c_email_id,
+			c_name,
+			c_password,
+			c_join_date,
+			c_bank_account_number
+        );
+
+    END IF;
+END$$
+DELIMITER ;
+
  
 create table ORD
 (
