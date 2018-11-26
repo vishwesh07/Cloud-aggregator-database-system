@@ -34,7 +34,56 @@ def myCSPs():
     try:
         ca_id = request.args['ca_id']
         if ca_id:
-            return json.dumps({'results': sql_select('select * from Csp;')})
+            return json.dumps({'results': sql_select('select * from Csp')})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/myCustomers', methods=['GET'])
+def myCustomers():
+    try:
+        ca_id = request.args['ca_id']
+        if ca_id:
+            return json.dumps({'results': sql_select('select * from customer')})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/orders', methods=['GET'])
+def orders():
+    try:
+        customer_id = request.args['customer_id']
+        if customer_id:
+            return json.dumps({'results': sql_select('select * from ORD where customer_id="'+customer_id+'"')})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/bill', methods=['GET'])
+def bill():
+    try:
+        ca_id = request.args['ca_id']
+        if ca_id:
+            return json.dumps({'results': sql_select('select * from Csp')})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/login', methods=['POST'])
+def login():
+    try:
+        email = request.form['email']
+        role = request.form['role']
+        if email and role == "customer":
+            return json.dumps({'results': sql_select('select * from ca where email_id="'+email+'"')})
+        elif email and role == "ca":
+            return json.dumps({'results': sql_select('select * from customer where email_id="'+email+'"')})
+        elif email and role == "csp":
+            return json.dumps({'results': sql_select('select * from Csp where Email_id="'+email+'"')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
     except Exception as e:

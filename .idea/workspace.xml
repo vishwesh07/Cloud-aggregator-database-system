@@ -3,8 +3,8 @@
   <component name="ChangeListManager">
 <<<<<<< Updated upstream
     <list default="true" id="b31b65c4-d8bb-4a00-a04e-a0bc447b1f21" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMPE 226 Project/CMPE 226 Project.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMPE 226 Project/CMPE 226 Project.py" afterDir="false" />
+<<<<<<< Updated upstream
       <change beforePath="$PROJECT_DIR$/CMPE 226 Project/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/CMPE 226 Project/templates/login.html" afterDir="false" />
 =======
     <list default="true" id="94f5a61e-db6f-4027-9d77-47cf085beee9" name="Default Changelist" comment="">
@@ -12,6 +12,9 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMPE 226 Project/CMPE 226 Project.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMPE 226 Project/CMPE 226 Project.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMPE_226_Project_2.sql" beforeDir="false" afterPath="$PROJECT_DIR$/CMPE_226_Project_2.sql" afterDir="false" />
+>>>>>>> Stashed changes
+=======
+      <change beforePath="$PROJECT_DIR$/CMPE 226 Project/static/css/signup.css" beforeDir="false" afterPath="$PROJECT_DIR$/CMPE 226 Project/static/css/signup.css" afterDir="false" />
 >>>>>>> Stashed changes
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -28,8 +31,13 @@
         <entry file="file://$PROJECT_DIR$/CMPE_226_Project_2.sql">
           <provider selected="true" editor-type-id="text-editor">
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             <state relative-caret-position="362">
               <caret line="40" column="44" selection-start-line="40" selection-start-column="44" selection-end-line="40" selection-end-column="44" />
+=======
+            <state relative-caret-position="464">
+              <caret line="53" column="38" lean-forward="true" selection-start-line="53" selection-start-column="38" selection-end-line="53" selection-end-column="38" />
+>>>>>>> Stashed changes
               <folding>
                 <element signature="e#0#55#0" expanded="true" />
               </folding>
@@ -42,10 +50,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/CMPE 226 Project/static/css/signup.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="330">
+              <caret line="22" column="33" lean-forward="true" selection-start-line="22" selection-start-column="33" selection-end-line="22" selection-end-column="33" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/CMPE 226 Project/crud.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="131">
-              <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="17" selection-end-column="15" />
+            <state relative-caret-position="-4">
+              <caret line="3" column="1" selection-start-line="3" selection-start-column="1" selection-end-line="3" selection-end-column="1" />
               <folding>
                 <element signature="e#0#55#0" expanded="true" />
               </folding>
@@ -161,7 +178,11 @@
         <option value="$PROJECT_DIR$/CMPE 226 Project/templates/login.html" />
         <option value="$PROJECT_DIR$/CMPE 226 Project/templates/signup.html" />
         <option value="$PROJECT_DIR$/CMPE 226 Project/static/js/login.js" />
+<<<<<<< Updated upstream
         <option value="$PROJECT_DIR$/CMPE_226_Project_2.sql" />
+=======
+        <option value="$PROJECT_DIR$/CMPE 226 Project/static/css/signup.css" />
+>>>>>>> Stashed changes
         <option value="$PROJECT_DIR$/CMPE 226 Project/CMPE 226 Project.py" />
       </list>
     </option>
@@ -194,6 +215,19 @@
               <item name="cmpe226project2" type="b2602c69:ProjectViewProjectNode" />
               <item name="cmpe226project2" type="462c0819:PsiDirectoryNode" />
               <item name="CMPE 226 Project" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="cmpe226project2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="cmpe226project2" type="462c0819:PsiDirectoryNode" />
+              <item name="CMPE 226 Project" type="462c0819:PsiDirectoryNode" />
+              <item name="static" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="cmpe226project2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="cmpe226project2" type="462c0819:PsiDirectoryNode" />
+              <item name="CMPE 226 Project" type="462c0819:PsiDirectoryNode" />
+              <item name="static" type="462c0819:PsiDirectoryNode" />
+              <item name="css" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -239,10 +273,14 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5252000" />
+    <option name="totallyTimeSpent" value="9532000" />
   </component>
   <component name="ToolWindowManager">
+<<<<<<< Updated upstream
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
+=======
+    <frame x="0" y="23" width="1680" height="940" extended-state="6" />
+>>>>>>> Stashed changes
     <layout>
 <<<<<<< Updated upstream
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16239317" />
@@ -344,14 +382,36 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/CMPE 226 Project/static/css/signup.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="22" column="33" lean-forward="true" selection-start-line="22" selection-start-column="33" selection-end-line="22" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMPE 226 Project/crud.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4">
+          <caret line="3" column="1" selection-start-line="3" selection-start-column="1" selection-end-line="3" selection-end-column="1" />
+          <folding>
+            <element signature="e#0#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/CMPE 226 Project/CMPE 226 Project.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         <state relative-caret-position="362">
           <caret line="40" column="44" selection-start-line="40" selection-start-column="44" selection-end-line="40" selection-end-column="44" />
 =======
         <state relative-caret-position="1038">
           <caret line="64" column="81" lean-forward="true" selection-start-line="64" selection-start-column="81" selection-end-line="64" selection-end-column="81" />
+>>>>>>> Stashed changes
+=======
+        <state relative-caret-position="464">
+          <caret line="53" column="38" lean-forward="true" selection-start-line="53" selection-start-column="38" selection-end-line="53" selection-end-column="38" />
 >>>>>>> Stashed changes
           <folding>
             <element signature="e#0#55#0" expanded="true" />
