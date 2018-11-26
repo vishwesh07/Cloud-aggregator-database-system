@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="94f5a61e-db6f-4027-9d77-47cf085beee9" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMPE 226 Project/CMPE 226 Project.py" beforeDir="false" afterPath="$PROJECT_DIR$/CMPE 226 Project/CMPE 226 Project.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMPE 226 Project/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/CMPE 226 Project/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMPE 226 Project/templates/signup.html" beforeDir="false" afterPath="$PROJECT_DIR$/CMPE 226 Project/templates/signup.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMPE 226 Project/CMPE_226_Project_2.sql" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,20 +15,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/CMPE 226 Project/CMPE_226_Project_2.sql">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="280">
-              <caret line="82" lean-forward="true" selection-start-line="82" selection-end-line="82" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/CMPE 226 Project/CMPE 226 Project.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="561">
-              <caret line="51" column="57" selection-start-line="51" selection-start-column="57" selection-end-line="51" selection-end-column="57" />
+            <state relative-caret-position="255">
+              <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
               <folding>
                 <element signature="e#0#55#0" expanded="true" />
               </folding>
@@ -75,7 +63,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/CMPE 226 Project/static/js/login.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="60">
@@ -105,11 +93,11 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/CMPE 226 Project/CMPE 226 Project.py" />
         <option value="$PROJECT_DIR$/CMPE 226 Project/templates/index.html" />
         <option value="$PROJECT_DIR$/CMPE 226 Project/templates/login.html" />
         <option value="$PROJECT_DIR$/CMPE 226 Project/templates/signup.html" />
         <option value="$PROJECT_DIR$/CMPE 226 Project/static/js/login.js" />
+        <option value="$PROJECT_DIR$/CMPE 226 Project/CMPE 226 Project.py" />
       </list>
     </option>
   </component>
@@ -137,25 +125,6 @@
               <item name="cmpe226project2" type="b2602c69:ProjectViewProjectNode" />
               <item name="cmpe226project2" type="462c0819:PsiDirectoryNode" />
               <item name="CMPE 226 Project" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="cmpe226project2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="cmpe226project2" type="462c0819:PsiDirectoryNode" />
-              <item name="CMPE 226 Project" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="cmpe226project2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="cmpe226project2" type="462c0819:PsiDirectoryNode" />
-              <item name="CMPE 226 Project" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
-              <item name="js" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="cmpe226project2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="cmpe226project2" type="462c0819:PsiDirectoryNode" />
-              <item name="CMPE 226 Project" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -222,12 +191,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1543103784044</updated>
-      <workItem from="1543103785528" duration="4916000" />
+      <workItem from="1543103785528" duration="5212000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4916000" />
+    <option name="totallyTimeSpent" value="5212000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1680" height="940" extended-state="6" />
@@ -295,20 +264,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/CMPE 226 Project/CMPE 226 Project.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="561">
-          <caret line="51" column="57" selection-start-line="51" selection-start-column="57" selection-end-line="51" selection-end-column="57" />
-          <folding>
-            <element signature="e#0#55#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/CMPE 226 Project/static/js/login.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
           <caret line="4" column="24" selection-start-line="4" selection-start-column="24" selection-end-line="4" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMPE 226 Project/CMPE 226 Project.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
+          <folding>
+            <element signature="e#0#55#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
