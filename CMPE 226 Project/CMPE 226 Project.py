@@ -52,9 +52,9 @@ def signUp():
 
     except Exception as e:
         return json.dumps({'error': str(e)})
-    finally:
-        cursor.close()
-        conn.close()
+    # finally:
+    #     cursor.close()
+    #     conn.close()
 
 if __name__ == '__main__':
     app.run()
