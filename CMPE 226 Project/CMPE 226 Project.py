@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, json
+from flask import Flask, render_template, request, json, jsonify
 from flaskext.mysql import MySQL
+from flask_pymongo import PyMongo
 from werkzeug import generate_password_hash, check_password_hash
 from crud import sql_select, sql_delete, sql_update, sql_insert
 
@@ -12,6 +13,12 @@ app.config['MYSQL_DATABASE_PASSWORD'] = '1234'
 app.config['MYSQL_DATABASE_DB'] = 'multicloud'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
+
+# MongoDB configurations
+app.config['MONGO_DBNAME'] = 'multicloud'
+app.config['MONGO_URI'] = 'mongodb://localhost:27017/multicloud'
+
+mongo = PyMongo(app)
 
 @app.route('/')
 def main():
@@ -125,7 +132,7 @@ def signUp():
 
             _hashed_password = generate_password_hash(_password)
             if _role == 'user':
-                cursor.callproc('sp_createUser', (_email, _name, _hashed_password, _join_date, _bank_account_number))
+                cursor.callproc('sp_create_user', (_email, _name, _hashed_password, _join_date, _bank_account_number, None))
                 data = cursor.fetchall()
                 if len(data) is 0:
                     conn.commit()
@@ -134,7 +141,7 @@ def signUp():
                     return json.dumps({'error': str(data[0])})
 
             elif _role == 'csp':
-                cursor.callproc('sp_createCsp', (_email, _name, _hashed_password, _join_date, _bank_account_number))
+                cursor.callproc('sp_create_csp', (_email, _name, _hashed_password, _join_date, _bank_account_number))
                 data = cursor.fetchall()
                 if len(data) is 0:
                     conn.commit()
