@@ -98,17 +98,32 @@ def bill():
 
 @app.route('/login', methods=['POST'])
 def login():
+    print(request.form)
     try:
-        email = request.form['email']
-        role = request.form['role']
+        email = request.form['inputEmailLogin']
+        password = request.form['inputPasswordLogin']
+        role = request.args['role']
+
         if email and role == "customer":
-            return json.dumps({'results': sql_select('select * from ca where email_id="'+email+'"')})
+            userRow = sql_select('select * from customer where email_id="'+email+'"')
+            if check_password_hash(userRow[0][3], password):
+                return json.dumps({'results': userRow})
+            else:
+                return json.dumps({'error': 'Invalid password'}), 500
         elif email and role == "ca":
-            return json.dumps({'results': sql_select('select * from customer where email_id="'+email+'"')})
+            userRow = sql_select('select * from ca where email_id="'+email+'"')
+            if check_password_hash(userRow[0][3], password):
+                return json.dumps({'results': userRow})
+            else:
+                return json.dumps({'error': 'Invalid password'}), 500
         elif email and role == "csp":
-            return json.dumps({'results': sql_select('select * from Csp where Email_id="'+email+'"')})
+            userRow = sql_select('select * from csp where email_id="'+email+'"')
+            if check_password_hash(userRow[0][3], password):
+                return json.dumps({'results': userRow})
+            else:
+                return json.dumps({'error': 'Invalid password'}), 500
         else:
-            return json.dumps({'html': '<span>Enter the required fields</span>'})
+            return json.dumps({'error': 'Enter required fields'}), 500
     except Exception as e:
         return json.dumps({'error': str(e)})
 
