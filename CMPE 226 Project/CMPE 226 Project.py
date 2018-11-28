@@ -79,6 +79,7 @@ def orders():
     try:
         customer_id = request.args['customer_id']
         if customer_id:
+            print('select * from order_ where customer_id="'+customer_id+'"')
             return json.dumps({'results': sql_select('select * from order_ where customer_id="'+customer_id+'"')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
@@ -97,12 +98,13 @@ def orderHistory():
     except Exception as e:
         return json.dumps({'error': str(e)})
 
-@app.route('/bill', methods=['GET'])
+@app.route('/bills', methods=['GET'])
 def bill():
     try:
-        ca_id = request.args['ca_id']
-        if ca_id:
-            return json.dumps({'results': sql_select('select * from csp')})
+        customer_id = request.args['customer_id']
+        if customer_id:
+            print('select * from bill where customer_id="'+customer_id+'"')
+            return json.dumps({'results': sql_select('select * from bill where customer_id="'+customer_id+'"')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
     except Exception as e:
