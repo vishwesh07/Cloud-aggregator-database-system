@@ -9,7 +9,7 @@ $(function() {
     $('#btnSignUp').click(function() {
 
         $.ajax({
-            url: '/signUp?role='+dropdownval,
+            url: '/signUp?inputRole='+dropdownval,
             data: $('form').serialize(),
             type: 'POST',
             success: function(response) {

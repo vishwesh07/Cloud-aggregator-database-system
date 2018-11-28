@@ -22,7 +22,7 @@ number_of_machines int not null,
 ca_id int not null,
 customer_id int not null,
 bill_id int not null,
-gpu_cores int not null,
+cpu_cores int not null,
 ram int not null,
 disk_size int not null,
 order_end_date date not null,
@@ -81,10 +81,11 @@ csp_id int not null,
 # gpu varchar(20) not null,
 disk_size varchar(20) not null,
 ram int(4) not null,
-gpu_cores int(4) not null,
+cpu_cores int(4) not null,
 # os char(20) not null,
 ip_address varchar(16) not null,
 price int not null,
+customer_id int,
 primary key(mac_id, csp_id)
 );
 
@@ -137,6 +138,7 @@ alter table bill add constraint fk_bill_cust_id foreign key (customer_id ) refer
 alter table bill add constraint fk_bill_offer_id foreign key (offer_id) references offer(offer_id);
 
 alter table machine add constraint fk_machine_csp_id foreign key (csp_id) references csp(csp_id);
+alter table machine add constraint fk_machine_customer_id foreign key (customer_id) references customer(customer_id);
 
 alter table receives add constraint fk_receives_csp_id foreign key (csp_id) references csp(csp_id);
 alter table receives add constraint fk_receives_order_id foreign key (order_id) references order_(order_id);
@@ -177,14 +179,14 @@ insert into ca values(4324323,'fdfds@gmail.com','hgh',5454545, 'dfdfe');
 
 
 ###### Customer
-insert into customer values (11224,'Rohit@gmail.com','Rohit',134,'2000-09-09',3434,null);
-insert into customer values (11225,'Li@gmail.com','Li',135,'2000-09-19',3434,null);
-insert into customer values (11226,'Rakesh@gmail.com','Rakesh',136,'2000-09-29',3434,null);
-insert into customer values (11227,'Laxmi@gmail.com','Laxmi',137,'2000-01-09',3434,null);
-insert into customer values (11228,'Ravi@gmail.com','Ravi',138,'2000-02-09',3434,null);
-insert into customer values (11229,'John@gmail.com','John',139,'2000-03-09',3434,null);
-insert into customer values (11220,'Wayne@gmail.com','Wayne',1311,'2000-04-09',3434,null);
-insert into customer values (11241,'Kaka@gmail.com','Kaka',1341,'2000-09-05',3434,null);
+insert into customer values (11224,'Rohit@gmail.com','Rohit','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-09-09',3434,null);
+insert into customer values (11225,'Li@gmail.com','Li','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-09-19',3434,null);
+insert into customer values (11226,'Rakesh@gmail.com','Rakesh','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-09-29',3434,null);
+insert into customer values (11227,'Laxmi@gmail.com','Laxmi','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-01-09',3434,null);
+insert into customer values (11228,'Ravi@gmail.com','Ravi', 'pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-02-09',3434,null);
+insert into customer values (11229,'John@gmail.com','John','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-03-09',3434,null);
+insert into customer values (11220,'Wayne@gmail.com','Wayne','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-04-09',3434,null);
+insert into customer values (11241,'Kaka@gmail.com','Kaka','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-09-05',3434,null);
 
 
 ###### CSP
@@ -199,47 +201,47 @@ insert into csp values (12364,'EMC@gmail.com','VCE',1361,'2000-12-10',343461);
 
 ##### Machines
 #AWS Machines
-insert into machine values(1334151,1234,'6TB',16,1,'123.65.254.22',20);
-insert into machine values(1334152,1234,'6TB',32,1,'123.65.251.22',145);
-insert into machine values(1334153,1234,'6TB',8,2,'123.65.254.32',100);
-insert into machine values(1334154,1234,'6TB',4,8,'123.65.254.52',250);
-insert into machine values(1334155,1234,'10TB',8,8,'123.65.251.12',450);
-insert into machine values(1334156,1234,'100TB',8,16,'123.65.252.12',4500);
-insert into machine values(1334157,1234,'100TB',16,16,'123.65.253.12',450000);
+insert into machine values(1334151,1234,'6TB',16,1,'123.65.254.22',20,null);
+insert into machine values(1334152,1234,'6TB',32,1,'123.65.251.22',145,null);
+insert into machine values(1334153,1234,'6TB',8,2,'123.65.254.32',100,null);
+insert into machine values(1334154,1234,'6TB',4,8,'123.65.254.52',250,null);
+insert into machine values(1334155,1234,'10TB',8,8,'123.65.251.12',450,null);
+insert into machine values(1334156,1234,'100TB',8,16,'123.65.252.12',4500,null);
+insert into machine values(1334157,1234,'100TB',16,16,'123.65.253.12',450000,null);
 
 #Google
-insert into machine values(1234151,1235,'60TB',8,5,'123.65.254.22',545);
-insert into machine values(1134151,1235,'16TB',16,5,'123.65.254.32',145);
-insert into machine values(13134151,1235,'32TB',8,4,'123.65.254.42',2345);
-insert into machine values(134151,1235,'8TB',8,10,'123.65.254.52',450);
-insert into machine values(1354151,1235,'16TB',16,10,'123.65.254.62',45000);
+insert into machine values(1234151,1235,'60TB',8,5,'123.65.254.22',545,null);
+insert into machine values(1134151,1235,'16TB',16,5,'123.65.254.32',145,null);
+insert into machine values(13134151,1235,'32TB',8,4,'123.65.254.42',2345,null);
+insert into machine values(134151,1235,'8TB',8,10,'123.65.254.52',450,null);
+insert into machine values(1354151,1235,'16TB',16,10,'123.65.254.62',45000,null);
 
 #vCloud
-insert into machine values(1114151,12361,'6TB',4,8,'121.65.254.12',100);
-insert into machine values(1214151,12361,'6TB',8,8,'122.65.254.12',150);
-insert into machine values(1314151,12361,'6TB',16,16,'124.65.254.12',250);
+insert into machine values(1114151,12361,'6TB',4,8,'121.65.254.12',100,null);
+insert into machine values(1214151,12361,'6TB',8,8,'122.65.254.12',150,null);
+insert into machine values(1314151,12361,'6TB',16,16,'124.65.254.12',250,null);
 
 #Azure
-insert into machine values(1334111,1236,'16TB',8,5,'123.65.254.11',145);
-insert into machine values(1334121,1236,'8TB',8,5,'123.65.254.13',245);
-insert into machine values(1334131,1236,'4TB',8,5,'123.65.254.12',415);
-insert into machine values(1334141,1236,'32TB',8,5,'123.65.254.14',450);
-insert into machine values(1334101,1236,'64TB',16,16,'123.65.254.15',4500);
+insert into machine values(1334111,1236,'16TB',8,5,'123.65.254.11',145,null);
+insert into machine values(1334121,1236,'8TB',8,5,'123.65.254.13',245,null);
+insert into machine values(1334131,1236,'4TB',8,5,'123.65.254.12',415,null);
+insert into machine values(1334141,1236,'32TB',8,5,'123.65.254.14',450,null);
+insert into machine values(1334101,1236,'64TB',16,16,'123.65.254.15',4500,null);
 
 #RackConnect
-insert into machine values(1334111,12362,'16TB',8,5,'113.25.254.12',450);
-insert into machine values(1334112,12362,'8TB',8,5,'113.26.254.12',100);
-insert into machine values(1334113,12362,'16TB',16,5,'113.35.254.12',800);
+insert into machine values(1334111,12362,'16TB',8,5,'113.25.254.12',450,null);
+insert into machine values(1334112,12362,'8TB',8,5,'113.26.254.12',100,null);
+insert into machine values(1334113,12362,'16TB',16,5,'113.35.254.12',800,null);
 
 #Right Mix
-insert into machine values(1034151,12363,'16TB',4,5,'120.65.254.12',415);
-insert into machine values(1934151,12363,'16TB',8,5,'129.65.254.12',425);
-insert into machine values(1834151,12363,'16TB',16,5,'183.65.254.12',435);
+insert into machine values(1034151,12363,'16TB',4,5,'120.65.254.12',415,null);
+insert into machine values(1934151,12363,'16TB',8,5,'129.65.254.12',425,null);
+insert into machine values(1834151,12363,'16TB',16,5,'183.65.254.12',435,null);
 
 #VCE
-insert into machine values(1534151,12364,'8TB',8,5,'123.85.254.12',4500);
-insert into machine values(1634151,12364,'32TB',16,5,'123.75.254.12',4590);
-insert into machine values(1734151,12364,'16TB',16,5,'123.55.254.12',4580);
+insert into machine values(1534151,12364,'8TB',8,5,'123.85.254.12',4500,null);
+insert into machine values(1634151,12364,'32TB',16,5,'123.75.254.12',4590,null);
+insert into machine values(1734151,12364,'16TB',16,5,'123.55.254.12',4580,null);
 
 
 ###### CSP_Contracts
@@ -333,7 +335,7 @@ insert into receives values(12364,2013,5);
 
 
 delimiter $$
-create definer=`root`@`localhost` procedure `sp_create_user`(
+create definer=`root`@`localhost` procedure `sp_create_customer`(
     in sp_email_id varchar(255),
     in sp_name varchar(255),
     in sp_password varchar(255),

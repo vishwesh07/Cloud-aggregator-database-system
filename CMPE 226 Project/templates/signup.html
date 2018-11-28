@@ -5,7 +5,8 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://getbootstrap.com/docs/3.3/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
     <link href="../static/css/signup.css" rel="stylesheet">
-    <script src="../static/js/jquery-3.3.1.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="../static/js/signup.js"></script>
   </head>
   <body>
@@ -32,15 +33,15 @@
         <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required>
             <label for="inputJoinDate" class="sr-only">Customer Join Date</label>
         <input type="name" name="inputJoinDate" id="inputJoinDate" class="form-control" placeholder="Join Date" required autofocus>
-          <div class="dropdown">
-           <button class="roleBtnClass btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%; padding:0">
-             Choose Role<span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-              <li><a href="#" class="roleClass">csp</a></li>
-              <li><a href="#" class="roleClass">ca</a></li>
-              <li><a href="#" class="roleClass">customer</a></li>
-            </ul>
+           <div class="dropdown">
+             <button class="roleBtnClass btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%; padding:0">
+               Choose Role<span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                <li><a href="#" class="roleClass">csp</a></li>
+                <li><a href="#" class="roleClass">ca</a></li>
+                <li><a href="#" class="roleClass">customer</a></li>
+              </ul>
           </div>
             <label for="inputBankAccount" class="sr-only">Customer Bank Account Number</label>
         <input type="name" name="inputBankAccount" id="inputBankAccount" class="form-control" placeholder="Bank Account Number" required autofocus>

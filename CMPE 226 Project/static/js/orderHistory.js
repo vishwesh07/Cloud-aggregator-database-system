@@ -1,11 +1,8 @@
 $(function() {
     $('document').ready(function() {
         $.ajax({
-            url: '/login',
-            data: $('form').serialize(),
+            url: '/orderHistory?customer_id='+sessionStorage.getItem("id"),
             type: 'GET',
-
-
             success: function(response) {
                 console.log(response);
             },

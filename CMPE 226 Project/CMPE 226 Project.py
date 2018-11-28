@@ -9,7 +9,7 @@ mysql = MySQL()
 
 # MySQL configurations
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '1234'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
 app.config['MYSQL_DATABASE_DB'] = 'multicloud'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
@@ -79,7 +79,18 @@ def orders():
     try:
         customer_id = request.args['customer_id']
         if customer_id:
-            return json.dumps({'results': sql_select('select * from ORD where customer_id="'+customer_id+'"')})
+            return json.dumps({'results': sql_select('select * from order_ where customer_id="'+customer_id+'"')})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/orderHistory', methods=['GET'])
+def orderHistory():
+    try:
+        customer_id = request.args['customer_id']
+        if customer_id:
+            return json.dumps({'results': sql_select('select * from order_ where customer_id="'+customer_id+'"')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
     except Exception as e:
@@ -90,7 +101,7 @@ def bill():
     try:
         ca_id = request.args['ca_id']
         if ca_id:
-            return json.dumps({'results': sql_select('select * from Csp')})
+            return json.dumps({'results': sql_select('select * from csp')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
     except Exception as e:
@@ -105,19 +116,19 @@ def login():
         role = request.args['role']
 
         if email and role == "customer":
-            userRow = sql_select('select * from customer where email_id="'+email+'"')
+            userRow = sql_select('select * from customer where customer_email_id="'+email+'"')
             if check_password_hash(userRow[0][3], password):
                 return json.dumps({'results': userRow})
             else:
                 return json.dumps({'error': 'Invalid password'}), 500
         elif email and role == "ca":
-            userRow = sql_select('select * from ca where email_id="'+email+'"')
+            userRow = sql_select('select * from ca where ca_email_id="'+email+'"')
             if check_password_hash(userRow[0][3], password):
                 return json.dumps({'results': userRow})
             else:
                 return json.dumps({'error': 'Invalid password'}), 500
         elif email and role == "csp":
-            userRow = sql_select('select * from csp where email_id="'+email+'"')
+            userRow = sql_select('select * from csp where csp_email_id="'+email+'"')
             if check_password_hash(userRow[0][3], password):
                 return json.dumps({'results': userRow})
             else:
@@ -135,7 +146,7 @@ def signUp():
         _password = request.form['inputPassword']
         _join_date = request.form['inputJoinDate']
         _bank_account_number = request.form['inputBankAccount']
-        _role = request.form['inputRole']
+        _role = request.args['inputRole']
 
         conn = mysql.connect()
         cursor = conn.cursor()
@@ -144,10 +155,9 @@ def signUp():
         if _name and _email and _password and _join_date and _bank_account_number:
 
             # All Good, let's call MySQL
-
             _hashed_password = generate_password_hash(_password)
-            if _role == 'user':
-                cursor.callproc('sp_create_user', (_email, _name, _hashed_password, _join_date, _bank_account_number, None))
+            if _role == 'customer':
+                cursor.callproc('sp_create_customer', (_email, _name, _hashed_password, _join_date, _bank_account_number, None))
                 data = cursor.fetchall()
                 if len(data) is 0:
                     conn.commit()
