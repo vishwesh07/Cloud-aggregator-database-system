@@ -86,13 +86,25 @@ def orders():
     except Exception as e:
         return json.dumps({'error': str(e)})
 
+@app.route('/currentOrders', methods=['GET'])
+def currentOrders():
+    try:
+        customer_id = request.args['customer_id']
+        if customer_id:
+            print('select * from order_ where customer_id="'+customer_id+'"')
+            return json.dumps({'results': sql_select('select * from order_ where customer_id="'+customer_id+'" and order_end_date is null')})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
 @app.route('/orderHistory', methods=['GET'])
 def orderHistory():
     try:
         customer_id = request.args['customer_id']
         if customer_id:
             print('select * from order_ where customer_id="'+customer_id+'"')
-            return json.dumps({'results': sql_select('select * from order_ where customer_id="'+customer_id+'"')})
+            return json.dumps({'results': sql_select('select * from order_ where customer_id="'+customer_id+'" and order_end_date is not null')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
     except Exception as e:

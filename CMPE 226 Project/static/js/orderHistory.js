@@ -9,9 +9,9 @@ $(function() {
                   orderList.map(order =>
                     $("<tr>").append($("<td>").text(order[0]))
                         .append($("<td>").text(order[1])).append($("<td>").text(order[2]))
-                        .append($("<td>").text(order[3])).append($("<td>").text(order[4]))
                         .append($("<td>").text(order[5])).append($("<td>").text(order[6]))
-                        .append($("<td>").text(order[7]))
+                        .append($("<td>").text(order[7])).append($("<td>").text(order[8]))
+                        .append($("<td>").text(order[9]))
                   )
                 );
             },
