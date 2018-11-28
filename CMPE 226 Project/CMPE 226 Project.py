@@ -52,6 +52,38 @@ def showProfile():
 def showHelp():
     return render_template('help.html')
 
+@app.route('/showAdmin')
+def showAdmin():
+    return render_template('admin.html')
+
+@app.route('/showCsp')
+def showCsp():
+    return render_template('csp.html')
+
+@app.route('/showCspMachines')
+def showCspMachines():
+    return render_template('cspMachines.html')
+
+@app.route('/showCspOrderHistory')
+def showCspOrderHistory():
+    return render_template('cspOrderHistory.html')
+
+@app.route('/showCspProfile')
+def showCspProfile():
+    return render_template('cspProfile.html')
+
+@app.route('/showCspHelp')
+def showCspHelp():
+    return render_template('cspHelp.html')
+
+@app.route('/showAdminCustomer')
+def showAdminCustomer():
+    return render_template('adminCustomer.html')
+
+@app.route('/showCspBilling')
+def showCspBilling():
+    return render_template('cspBilling.html')
+
 @app.route('/myCSPs', methods=['GET'])
 def myCSPs():
     try:
