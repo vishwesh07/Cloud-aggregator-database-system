@@ -90,6 +90,7 @@ def orderHistory():
     try:
         customer_id = request.args['customer_id']
         if customer_id:
+            print('select * from order_ where customer_id="'+customer_id+'"')
             return json.dumps({'results': sql_select('select * from order_ where customer_id="'+customer_id+'"')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
