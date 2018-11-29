@@ -187,6 +187,7 @@ insert into customer values (11228,'Ravi@gmail.com','Ravi', 'pbkdf2:sha256:50000
 insert into customer values (11229,'John@gmail.com','John','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-03-09',3434,null);
 insert into customer values (11220,'Wayne@gmail.com','Wayne','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-04-09',3434,null);
 insert into customer values (11241,'Kaka@gmail.com','Kaka','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-09-05',3434,null);
+insert into customer values (11242,'maulik@gmail.com','maulik','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-09-05',3434,null);
 
 
 ###### CSP
@@ -352,22 +353,44 @@ else
 
 insert into customer
 (
-customer_email_id,
-customer_name,
-customer_password,
-customer_join_date,
-customer_bank_account,
-customer_offer_id
+  customer_email_id,
+  customer_name,
+  customer_password,
+  customer_join_date,
+  customer_bank_account,
+  customer_offer_id
 )
 values
 (
-sp_email_id,
-sp_name,
-sp_password,
-sp_join_date,
-sp_bank_account_number,
-null
+  sp_email_id,
+  sp_name,
+  sp_password,
+  sp_join_date,
+  sp_bank_account_number,
+  null
 );
+
+end if;
+end$$
+delimiter ;
+
+delimiter $$
+create definer=`root`@`localhost` procedure `sp_create_order`(
+in sp_email_id varchar(255),
+in sp_ram int,
+in sp_cpu int,
+in sp_disk_size int,
+in sp_no_of_machines int,
+in sp_customer_id int
+)
+begin
+if ( (select count(*) from machine where customer_id is null) > sp_no_of_machines ) then
+
+update machine set customer_id=sp_customer_id  where customer_id is NULL  order by price limit sp_no_of_machines;
+
+else
+
+select 'Not enough resources available!!';
 
 end if;
 end$$
@@ -390,19 +413,15 @@ else
 
 insert into csp
 (
-csp_email_id,
-csp_name,
-csp_password,
-csp_join_date,
-csp_bank_account_number
+  csp_email_id,
+  csp_name,
+  csp_password,
+  csp_join_date,
+  csp_bank_account_number
 )
 values
 (
-c_email_id,
-c_name,
-c_password,
-c_join_date,
-c_bank_account_number
+  1
 );
 
 end if;
