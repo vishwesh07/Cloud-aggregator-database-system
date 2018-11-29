@@ -22,10 +22,12 @@ create table order_
   ca_id int not null,
   customer_id int not null,
   bill_id int not null,
-  cpu_cores int not null,
-  ram int not null,
-  disk_size int not null,
+  cpu_cores int,
+  ram int,
+  disk_size int,
   order_end_date date,
+  order_amount int not null,
+  order_cost int not null,
   primary key (order_id)
 );
 
@@ -56,12 +58,11 @@ create table bill
 (
   bill_id int not null auto_increment,
   bill_amount int(12) not null,
-  csp_id int not null,
+  csp_id int,
   ca_id int not null,
-  customer_id int not null,
+  customer_id int,
   month int not null,
   year int not null,
-  offer_id int not null,
   primary key(bill_id)
 );
 
@@ -69,7 +70,7 @@ create table offer
 (
   offer_id int not null auto_increment,
   offer_name varchar(255) not null,
-  rebate int not null,
+  discount int not null,
   ca_id int not null,
   primary key(offer_id)
 );
@@ -85,7 +86,7 @@ create table machine
   # os char(20) not null,
   ip_address varchar(16) not null,
   price int not null,
-  customer_id int,
+  order_id int,
   primary key(mac_id, csp_id)
 );
 
@@ -94,6 +95,7 @@ create table receives
   csp_id int not null,
   order_id int not null,
   quantity int not null,
+  csp_cost int not null,
   primary key (csp_id,order_id)
 );
 
@@ -135,10 +137,9 @@ alter table order_ add constraint fk_order_customer_id foreign key (customer_id)
 alter table bill add constraint fk_bill_csp_id foreign key (csp_id) references csp(csp_id);
 alter table bill add constraint fk_bill_ca_id foreign key (ca_id) references ca(ca_id);
 alter table bill add constraint fk_bill_cust_id foreign key (customer_id ) references customer(customer_id);
-alter table bill add constraint fk_bill_offer_id foreign key (offer_id) references offer(offer_id);
 
 alter table machine add constraint fk_machine_csp_id foreign key (csp_id) references csp(csp_id);
-alter table machine add constraint fk_machine_customer_id foreign key (customer_id) references customer(customer_id);
+alter table machine add constraint fk_machine_order_id foreign key (order_id) references order_(order_id);
 
 alter table receives add constraint fk_receives_csp_id foreign key (csp_id) references csp(csp_id);
 alter table receives add constraint fk_receives_order_id foreign key (order_id) references order_(order_id);
@@ -297,42 +298,42 @@ insert into offer values (4324,'Platinum Offer',20,4324323);
 insert into offer values (4325,'Gold Bang Offer',15,4324323);
 
 ##### Bill
-insert into bill values (0001,5000,1234,12121,11224,'01','2000',4321);
-insert into bill values (0002,1000,12361,12121,11227,'01','2000',4323);
-insert into bill values (0003,2000,12364,12121,11220,'01','2000',4325);
+insert into bill values (0001,5000,1234,12121,11224,'01','2000');
+insert into bill values (0002,1000,12361,12121,11227,'01','2000');
+insert into bill values (0003,2000,12364,12121,11220,'01','2000');
 
 
-insert into bill values (1004,3000,1235,232323,11225,'02','2000',4325);
-insert into bill values (1005,53000,12362,232323,11228,'03','2000',4321);
-insert into bill values (1006,51000,1236,232323,11241,'01','2000',4323);
+insert into bill values (1004,3000,1235,232323,11225,'02','2000');
+insert into bill values (1005,53000,12362,232323,11228,'03','2000');
+insert into bill values (1006,51000,1236,232323,11241,'01','2000');
 
-insert into bill values (2004,4000,1236,4324323,11226,'07','2000',4322);
-insert into bill values (2005,43000,12364,4324323,11229,'08','2000',4324);
-insert into bill values (2006,41000,1235,4324323,11241,'09','2000',4325);
+insert into bill values (2004,4000,1236,4324323,11226,'07','2000');
+insert into bill values (2005,43000,12364,4324323,11229,'08','2000');
+insert into bill values (2006,41000,1235,4324323,11241,'09','2000');
 
 ##### Order
-insert into order_ values(0010,'2000-02-01',5,12121,11224,0001,16,16,6,'2000-10-10');
-insert into order_ values(0011,'2000-03-01',10,4324323,11227,0002,16,16,6,'2000-10-10');
-insert into order_ values(0012,'2000-04-01',4,232323,11226,2004,16,16,10,'2000-10-10');
+insert into order_ values(0010,'2000-02-01',5,12121,11224,0001,16,16,6,'2000-10-10', 40, 30);
+insert into order_ values(0011,'2000-03-01',10,4324323,11227,0002,16,16,6,'2000-10-10', 50, 40);
+insert into order_ values(0012,'2000-04-01',4,232323,11226,2004,16,16,10,'2000-10-10', 40, 30);
 
-insert into order_ values(1010,'2000-11-01',5,232323,11225,1004,32,16,100,'2001-10-10');
-insert into order_ values(1011,'2000-12-01',5,12121,11228,1005,4,16,16,'2001-10-10');
-insert into order_ values(1012,'2000-02-01',5,4324323,11229,2005,8,16,8,'2000-10-10');
+insert into order_ values(1010,'2000-11-01',5,232323,11225,1004,32,16,100,'2001-10-10', 60, 30);
+insert into order_ values(1011,'2000-12-01',5,12121,11228,1005,4,16,16,'2001-10-10', 70, 30);
+insert into order_ values(1012,'2000-02-01',5,4324323,11229,2005,8,16,8,'2000-10-10', 50, 40);
 
-insert into order_ values(2011,'2000-01-01',5,12121,11220,0003,8,16,16,'2000-10-10');
-insert into order_ values(2012,'2000-11-01',15,4324323,11241,2006,8,16,100,'2001-10-10');
-insert into order_ values(2013,'2000-01-01',5,4324323,11229,2005,8,16,100,'2000-10-10');
+insert into order_ values(2011,'2000-01-01',5,12121,11220,0003,8,16,16,'2000-10-10', 70, 60);
+insert into order_ values(2012,'2000-11-01',15,4324323,11241,2006,8,16,100,'2001-10-10', 70, 30);
+insert into order_ values(2013,'2000-01-01',5,4324323,11229,2005,8,16,100,'2000-10-10', 25, 20);
 
 ##### Receives
-insert into receives values(1234,0010,5);
-insert into receives values(12361,0011,10);
-insert into receives values(1236,0012,4);
-insert into receives values(1235,1010,5);
-insert into receives values(12362,1011,5);
-insert into receives values(12364,1012,5);
-insert into receives values(12364,2011,5);
-insert into receives values(1235,2012,15);
-insert into receives values(12364,2013,5);
+insert into receives values(1234,0010,5,30);
+insert into receives values(12361,0011,10,40);
+insert into receives values(1236,0012,4,50);
+insert into receives values(1235,1010,5,40);
+insert into receives values(12362,1011,5,40);
+insert into receives values(12364,1012,5,30);
+insert into receives values(12364,2011,5,50);
+insert into receives values(1235,2012,15,30);
+insert into receives values(12364,2013,5,50);
 
 
 delimiter $$

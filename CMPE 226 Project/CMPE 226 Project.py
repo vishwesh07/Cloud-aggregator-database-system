@@ -207,6 +207,8 @@ def placeOrder():
                 return json.dumps({'message': 'Order placed successfully !'})
             else:
                 return json.dumps({'message': str(data[0])})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
 
     except Exception as e:
         return json.dumps({'error': str(e)})
