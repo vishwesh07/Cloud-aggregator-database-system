@@ -56,11 +56,43 @@ def showProfile():
 def showHelp():
     return render_template('help.html')
 
+@app.route('/showAdmin')
+def showAdmin():
+    return render_template('admin.html')
+
+@app.route('/showCsp')
+def showCsp():
+    return render_template('csp.html')
+
+@app.route('/showCspMachines')
+def showCspMachines():
+    return render_template('cspMachines.html')
+
+@app.route('/showCspOrderHistory')
+def showCspOrderHistory():
+    return render_template('cspOrderHistory.html')
+
+@app.route('/showCspProfile')
+def showCspProfile():
+    return render_template('cspProfile.html')
+
+@app.route('/showCspHelp')
+def showCspHelp():
+    return render_template('cspHelp.html')
+
+@app.route('/showAdminCustomer')
+def showAdminCustomer():
+    return render_template('adminCustomer.html')
+
+@app.route('/showCspBilling')
+def showCspBilling():
+    return render_template('cspBilling.html')
+
 @app.route('/myCSPs', methods=['GET'])
 def myCSPs():
     try:
-        ca_id = request.args['ca_id']
-        if ca_id:
+        _ca_id = request.args['ca_id']
+        if _ca_id:
             return json.dumps({'results': sql_select('select * from Csp')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
@@ -70,8 +102,8 @@ def myCSPs():
 @app.route('/myCustomers', methods=['GET'])
 def myCustomers():
     try:
-        ca_id = request.args['ca_id']
-        if ca_id:
+        _ca_id = request.args['ca_id']
+        if _ca_id:
             return json.dumps({'results': sql_select('select * from customer')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
@@ -81,10 +113,10 @@ def myCustomers():
 @app.route('/orders', methods=['GET'])
 def orders():
     try:
-        customer_id = request.args['customer_id']
-        if customer_id:
-            print('select * from order_ where customer_id="'+customer_id+'"')
-            return json.dumps({'results': sql_select('select * from order_ where customer_id="'+customer_id+'"')})
+        _customer_id = request.args['customer_id']
+        if _customer_id:
+            print('select * from order_ where customer_id="'+_customer_id+'"')
+            return json.dumps({'results': sql_select('select * from order_ where customer_id="'+_customer_id+'"')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
     except Exception as e:
@@ -93,10 +125,10 @@ def orders():
 @app.route('/currentOrders', methods=['GET'])
 def currentOrders():
     try:
-        customer_id = request.args['customer_id']
-        if customer_id:
-            print('select * from order_ where customer_id="'+customer_id+'"')
-            return json.dumps({'results': sql_select('select * from order_ where customer_id="'+customer_id+'" and order_end_date is null')})
+        _customer_id = request.args['customer_id']
+        if _customer_id:
+            print('select * from order_ where customer_id="'+_customer_id+'"')
+            return json.dumps({'results': sql_select('select * from order_ where customer_id="'+_customer_id+'" and order_end_date is null')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
     except Exception as e:
@@ -105,10 +137,10 @@ def currentOrders():
 @app.route('/orderHistory', methods=['GET'])
 def orderHistory():
     try:
-        customer_id = request.args['customer_id']
-        if customer_id:
-            print('select * from order_ where customer_id="'+customer_id+'"')
-            return json.dumps({'results': sql_select('select * from order_ where customer_id="'+customer_id+'" and order_end_date is not null')})
+        _customer_id = request.args['customer_id']
+        if _customer_id:
+            print('select * from order_ where customer_id="'+_customer_id+'"')
+            return json.dumps({'results': sql_select('select * from order_ where customer_id="'+_customer_id+'" and order_end_date is not null')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
     except Exception as e:
@@ -117,10 +149,10 @@ def orderHistory():
 @app.route('/bills', methods=['GET'])
 def bill():
     try:
-        customer_id = request.args['customer_id']
-        if customer_id:
-            print('select * from bill where customer_id="'+customer_id+'"')
-            return json.dumps({'results': sql_select('select * from bill where customer_id="'+customer_id+'"')})
+        _customer_id = request.args['customer_id']
+        if _customer_id:
+            print('select * from bill where customer_id="'+_customer_id+'"')
+            return json.dumps({'results': sql_select('select * from bill where customer_id="'+_customer_id+'"')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
     except Exception as e:
@@ -130,30 +162,58 @@ def bill():
 def login():
     print(request.form)
     try:
-        email = request.form['inputEmailLogin']
-        password = request.form['inputPasswordLogin']
-        role = request.args['role']
+        _email = request.form['inputEmailLogin']
+        _password = request.form['inputPasswordLogin']
+        _role = request.args['inputRole']
 
-        if email and role == "customer":
-            userRow = sql_select('select * from customer where customer_email_id="'+email+'"')
-            if check_password_hash(userRow[0][3], password):
+        if _email and _role == "customer":
+            userRow = sql_select('select * from customer where customer_email_id="'+_email+'"')
+            if check_password_hash(userRow[0][3], _password):
                 return json.dumps({'results': userRow})
             else:
                 return json.dumps({'error': 'Invalid password'}), 500
-        elif email and role == "ca":
-            userRow = sql_select('select * from ca where ca_email_id="'+email+'"')
-            if check_password_hash(userRow[0][3], password):
+        elif _email and _role == "ca":
+            userRow = sql_select('select * from ca where ca_email_id="'+_email+'"')
+            if check_password_hash(userRow[0][3], _password):
                 return json.dumps({'results': userRow})
             else:
                 return json.dumps({'error': 'Invalid password'}), 500
-        elif email and role == "csp":
-            userRow = sql_select('select * from csp where csp_email_id="'+email+'"')
-            if check_password_hash(userRow[0][3], password):
+        elif _email and _role == "csp":
+            userRow = sql_select('select * from csp where csp_email_id="'+_email+'"')
+            if check_password_hash(userRow[0][3], _password):
                 return json.dumps({'results': userRow})
             else:
                 return json.dumps({'error': 'Invalid password'}), 500
         else:
             return json.dumps({'error': 'Enter required fields'}), 500
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/placeOrder', methods=['POST'])
+def placeOrder():
+    print(request.form)
+    try:
+        _startDate = request.form['inputOrderStartDate']
+        _ram = request.form['inputRam']
+        _cpu = request.form['inputCpu']
+        _diskSize = request.form['inputDiskSize']
+        _noOfMahcines = request.form['inputNoOfMachines']
+        _customer_id = request.args['customer_id']
+
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        if _startDate and _ram and _cpu and _diskSize and _noOfMahcines and _customer_id:
+            cursor.callproc('sp_create_order', (_startDate, _ram, _cpu, _diskSize, _noOfMahcines, _customer_id))
+            data = cursor.fetchall()
+            if len(data) is 0:
+                conn.commit()
+                return json.dumps({'message': 'Order placed successfully !'})
+            else:
+                return json.dumps({'message': str(data[0])})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+
     except Exception as e:
         return json.dumps({'error': str(e)})
 

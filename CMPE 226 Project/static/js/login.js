@@ -9,7 +9,7 @@ $(function() {
     $('#btnLogin').click(function() {
         sessionStorage.setItem("email_id", dropdownval);
         $.ajax({
-            url: '/login?role='+dropdownval,
+            url: '/login?inputRole='+dropdownval,
             data: $('form').serialize(),
             type: 'POST',
             success: function(response) {

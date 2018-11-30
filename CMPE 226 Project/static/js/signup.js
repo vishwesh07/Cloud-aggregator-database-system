@@ -1,6 +1,8 @@
 $(function() {
     var dropdownval = "";
-
+    $('document').ready(function() {
+        $(".registrationSuccess").hide();
+    });
     $(".roleClass").click(function(e) {
         $(".roleBtnClass").text(e.target.text);
         dropdownval = e.target.text;
@@ -14,6 +16,7 @@ $(function() {
             type: 'POST',
             success: function(response) {
                 console.log(response);
+                $(".registrationSuccess").show();
             },
             error: function(error) {
                 console.log(error);
