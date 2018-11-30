@@ -11,7 +11,7 @@ $(function() {
     $('#btnSignUp').click(function() {
 
         $.ajax({
-            url: '/signUp?inputRole='+dropdownval,
+            url: '/signUp?inputRole='+dropdownval+'&inputCaId='+sessionStorage.getItem("ca_id"),
             data: $('form').serialize(),
             type: 'POST',
             success: function(response) {

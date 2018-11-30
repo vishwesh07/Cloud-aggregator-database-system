@@ -199,12 +199,13 @@ def placeOrder():
         _diskSize = request.form['inputDiskSize']
         _noOfMahcines = request.form['inputNoOfMachines']
         _customer_id = request.args['customer_id']
+        _ca_id = request.args['inputCaId']
 
         conn = mysql.connect()
         cursor = conn.cursor()
 
-        if _startDate and _ram and _cpu and _diskSize and _noOfMahcines and _customer_id:
-            cursor.callproc('sp_create_order', (_startDate, _ram, _cpu, _diskSize, _noOfMahcines, _customer_id))
+        if _startDate and _ram and _cpu and _diskSize and _noOfMahcines and _customer_id and _ca_id:
+            cursor.callproc('sp_create_order', (_startDate, _ram, _cpu, _diskSize, _noOfMahcines, _customer_id, _ca_id))
             data = cursor.fetchall()
             if len(data) is 0:
                 conn.commit()
@@ -226,17 +227,17 @@ def signUp():
         _join_date = request.form['inputJoinDate']
         _bank_account_number = request.form['inputBankAccount']
         _role = request.args['inputRole']
+        _ca_id = request.args['inputCaId']
 
         conn = mysql.connect()
         cursor = conn.cursor()
 
         # validate the received values
-        if _name and _email and _password and _join_date and _bank_account_number:
-
+        if _name and _email and _password and _join_date and _bank_account_number and _ca_id:
             # All Good, let's call MySQL
             _hashed_password = generate_password_hash(_password)
             if _role == 'customer':
-                cursor.callproc('sp_create_customer', (_email, _name, _hashed_password, _join_date, _bank_account_number, None))
+                cursor.callproc('sp_create_customer', (_email, _name, _hashed_password, _join_date, _bank_account_number, _ca_id))
                 data = cursor.fetchall()
                 if len(data) is 0:
                     conn.commit()

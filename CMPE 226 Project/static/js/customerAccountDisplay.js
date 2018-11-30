@@ -2,7 +2,7 @@ $(function() {
     $('.placeOrder').click(function() {
         console.log($('.placeOrderForm').serialize());
         $.ajax({
-            url: '/placeOrder?customer_id='+sessionStorage.getItem("id"),
+            url: '/placeOrder?customer_id='+sessionStorage.getItem("id")+'&inputCaId='+sessionStorage.getItem("ca_id"),
             data: $('.placeOrderForm').serialize(),
             type: 'POST',
             success: function(response) {
