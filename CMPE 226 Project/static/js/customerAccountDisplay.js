@@ -23,7 +23,7 @@ $(function() {
     });
     $('document').ready(function() {
         $.ajax({
-            url: '/currentOrders?customer_id='+sessionStorage.getItem("id"),
+            url: '/currentOrders?inputId='+sessionStorage.getItem("id")+'&inputCaId='+sessionStorage.getItem("ca_id")+'&inputRole='+sessionStorage.getItem("role"),
             type: 'GET',
             success: function(response) {
                 var orderList = JSON.parse(response).results;
@@ -32,7 +32,7 @@ $(function() {
                     $("<tr>").append($("<td>").text(order[0]))
                         .append($("<td>").text(order[1])).append($("<td>").text(order[2]))
                         .append($("<td>").text(order[5])).append($("<td>").text(order[6]))
-                        .append($("<td>").text(order[7])).append($("<td>").text(order[8]))
+                        .append($("<td>").text(order[7]))
                   )
                 );
             },
