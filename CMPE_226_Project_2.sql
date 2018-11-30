@@ -30,13 +30,12 @@ create table order_
   primary key (order_id)
 );
 
-
 create table ca
 (
   ca_id int not null auto_increment,
   ca_email_id varchar(255) not null,
   ca_name char(255) not null,
-  ca_bank_account int not null,
+  ca_bank_account_number int not null,
   ca_password varchar(255) not null,
   primary key(ca_id)
 );
@@ -127,6 +126,10 @@ create table csp_contracts
   primary key(ca_id,csp_id)
 );
 
+create view order_customer as select order_id, order_date, number_of_machines, ca_id, customer_id, cpu_cores, ram, disk_size, order_end_date, order_amount from order_;
+create view order_csp as select ord.order_id, ord.order_date, ord.number_of_machines, ord.ca_id, r.csp_id, ord.cpu_cores, ord.ram, ord.disk_size, ord.order_end_date, ord.order_cost
+from order_ ord, receives r where ord.order_id=r.order_id;
+
 alter table order_ add constraint fk_order_ca_id foreign key (ca_id) references ca(ca_id) ;
 alter table order_ add constraint fk_order_customer_id foreign key (customer_id) references customer(customer_id);
 
@@ -172,9 +175,9 @@ alter table csp_contracts add constraint fk_csp_contracts_ca_id foreign key (ca_
 
 
 ###### Ca
-insert into ca values(12121,'abah@gmail.com','khas', 132121, 'asas');
-insert into ca values(232323,'sds@gmail.com','dsds', 12434121, 'rwers');
-insert into ca values(4324323,'fdfds@gmail.com','hgh',5454545, 'dfdfe');
+insert into ca values(12121,'abah@gmail.com','khas', 132121, 'pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e');
+insert into ca values(232323,'sds@gmail.com','dsds', 12434121, 'pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e');
+insert into ca values(4324323,'fdfds@gmail.com','hgh',5454545, 'pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e');
 insert into ca values (123,'multicloud@gmail.com','multicloud',1361,'pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e');
 
 
@@ -191,13 +194,13 @@ insert into customer values (11242,'maulik@gmail.com','maulik','pbkdf2:sha256:50
 
 
 ###### CSP
-insert into csp values (1234,'amazon@gmail.com','AWS',134,'2000-09-09',3434);
-insert into csp values (1235,'google@gmail.com','Google',135,'2000-08-01',3435);
-insert into csp values (1236,'microsoft@gmail.com','Azure',136,'2000-10-10',34346);
-insert into csp values (12361,'VMwaret@gmail.com','vCloudAir',137,'2000-10-01',34347);
-insert into csp values (12362,'Rackspace@gmail.com','RackConnect',138,'2000-11-10',34348);
-insert into csp values (12363,'HPE@gmail.com','Right Mix',139,'2000-10-10',34349);
-insert into csp values (12364,'EMC@gmail.com','VCE',1361,'2000-12-10',343461);
+insert into csp values (1234,'amazon@gmail.com','AWS','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-09-09',3434);
+insert into csp values (1235,'google@gmail.com','Google','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-08-01',3435);
+insert into csp values (1236,'microsoft@gmail.com','Azure','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-10-10',34346);
+insert into csp values (12361,'VMwaret@gmail.com','vCloudAir','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-10-01',34347);
+insert into csp values (12362,'Rackspace@gmail.com','RackConnect','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-11-10',34348);
+insert into csp values (12363,'HPE@gmail.com','Right Mix','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-10-10',34349);
+insert into csp values (12364,'EMC@gmail.com','VCE','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-12-10',343461);
 
 ##### Machines
 #AWS Machines
@@ -336,31 +339,78 @@ insert into receives values(12364,2011,5,50);
 insert into receives values(1235,2012,15,30);
 insert into receives values(12364,2013,5,50);
 
-
 delimiter $$
 create definer=`root`@`localhost` procedure `sp_create_customer`(
 in sp_email_id varchar(255),
 in sp_name varchar(255),
 in sp_password varchar(255),
-in sp_join_date date,
 in sp_bank_account_number int,
 in sp_ca_id int
 )
 begin
 
-declare temp_custId int default 0;
+	declare temp_custId int default 0;
+	declare exit handler for sqlexception
+    begin
+		select 'Error occured';
+        rollback;
+        resignal;
+	end;
+	start transaction;
+		if ( select exists (select 1 from customer where customer_email_id = sp_email_id) ) then
 
-if ( select exists (select 1 from customer where customer_email_id = sp_email_id) ) then
+			select 'Customer exists !!';
 
-select 'username exists !!';
-
-else
-
-insert into customer (customer_email_id, customer_name, customer_password, customer_join_date, customer_bank_account, customer_offer_id) values (sp_email_id, sp_name, sp_password, sp_join_date, sp_bank_account_number, null);
-select customer_id into temp_custId from customer where customer_email_id=sp_email_id;
-insert into onboards values (sp_ca_id, temp_custId);
+		else
+        
+			insert into customer (customer_email_id, customer_name, customer_password, customer_join_date, customer_bank_account, customer_offer_id) values (sp_email_id, sp_name, sp_password, CURDATE(), sp_bank_account_number, null);
+			#select customer_id into temp_custId from customer where customer_email_id=sp_email_id;
+			insert into onboards (ca_id, customer_id) values (sp_ca_id, (select customer_id from customer where customer_email_id=sp_email_id));
 
 end if;
+end$$
+delimiter ;
+
+delimiter $$
+create definer=`root`@`localhost` procedure `sp_create_csp`(
+in c_email_id varchar(200),
+in c_name varchar(200),
+in c_password varchar(200),
+in c_bank_account_number int,
+in c_ca_id int
+)
+begin
+	declare exit handler for sqlexception
+    begin
+		select 'Error occured';
+        rollback;
+        resignal;
+	end;
+	start transaction;
+	if ( select exists (select 1 from csp where csp_email_id = c_email_id) ) then
+
+		select 'CSP exists !!';
+
+	else
+
+		insert into csp ( csp_email_id, csp_name, csp_password, csp_join_date, csp_bank_account_number) values (c_email_id, c_name, c_password, CURDATE(), c_bank_account_number);
+		insert into csp_contracts (ca_id, csp_id) values (c_ca_id, (select csp_id from csp where csp_email_id=c_email_id)); 
+        
+end if;
+end$$
+delimiter ;
+
+delimiter $$
+create definer=`root`@`localhost` procedure `sp_create_ca`(
+in ca_email_id varchar(200),
+in ca_name varchar(200),
+in ca_password varchar(200),
+in ca_bank_account_number int
+)
+begin
+
+	insert into ca ( ca_email_id, ca_name, ca_password, ca_bank_account_number) values (ca_email_id, ca_name, ca_password, ca_bank_account_number);
+
 end$$
 delimiter ;
 
@@ -376,60 +426,35 @@ in sp_ca_id int
 )
 begin
 
-declare temp_count int;
-declare temp_price int;
-declare temp_last_order_id int;
+	declare temp_count int;
+	declare temp_price int;
+	declare temp_last_order_id int;
 
-select count(m.mac_id), sum(m.price) into temp_count, temp_price from csp_contracts c join machine m on c.csp_id=m.csp_id where c.ca_id=sp_ca_id and m.cpu_cores=sp_cpu and m.ram=sp_ram and m.disk_size=sp_disk_size and m.order_id is null order by m.price limit sp_no_of_machines;
+	declare exit handler for sqlexception
+    begin
+		select 'Error occured';
+        rollback;
+        resignal;
+	end;
+	start transaction;
+	 
+		select count(m.mac_id), sum(m.price) into temp_count, temp_price from csp_contracts c join machine m on c.csp_id=m.csp_id where c.ca_id=sp_ca_id and m.cpu_cores=sp_cpu and m.ram=sp_ram and m.disk_size=sp_disk_size and m.order_id is null order by m.price limit sp_no_of_machines;
 
-if ( temp_count > sp_no_of_machines ) then
+		if ( temp_count > sp_no_of_machines ) then
 
-insert into order_ (order_date, number_of_machines, ca_id, customer_id, cpu_cores, ram, disk_size, order_end_date, order_amount, order_cost) values ("2018-02-02", sp_no_of_machines,sp_ca_id,sp_customer_id, sp_cpu, sp_ram, sp_disk_size, null, temp_price*1.2, temp_price);
-#select m.mac_id, m.csp_id, m.price from csp_contracts c join machine m on c.csp_id=m.csp_id where c.ca_id=sp_ca_id and m.cpu_cores=sp_cpu and m.ram=sp_ram and m.disk_size=sp_disk_size order by m.price limit 1;
+		insert into order_ (order_date, number_of_machines, ca_id, customer_id, cpu_cores, ram, disk_size, order_end_date, order_amount, order_cost) values (CURDATE(), sp_no_of_machines,sp_ca_id,sp_customer_id, sp_cpu, sp_ram, sp_disk_size, null, temp_price*1.2, temp_price);
+		#select m.mac_id, m.csp_id, m.price from csp_contracts c join machine m on c.csp_id=m.csp_id where c.ca_id=sp_ca_id and m.cpu_cores=sp_cpu and m.ram=sp_ram and m.disk_size=sp_disk_size order by m.price limit 1;
 
-set temp_last_order_id = LAST_INSERT_ID();
-update  machine m1 join (select m.mac_id from csp_contracts c join machine m on c.csp_id=m.csp_id where c.ca_id=sp_ca_id and m.cpu_cores=sp_cpu and m.ram=sp_ram and m.disk_size=sp_disk_size and m.order_id is null order by m.price limit sp_no_of_machines) s
-on m1.mac_id=s.mac_id set m1.order_id=temp_last_order_id;
+		set temp_last_order_id = LAST_INSERT_ID();
+		
+        update  machine m1 join (select m.mac_id from csp_contracts c join machine m on c.csp_id=m.csp_id where c.ca_id=sp_ca_id and m.cpu_cores=sp_cpu and m.ram=sp_ram and m.disk_size=sp_disk_size and m.order_id is null order by m.price limit sp_no_of_machines) s
+		on m1.mac_id=s.mac_id set m1.order_id=temp_last_order_id;
 
-insert into receives (csp_id, order_id, csp_cost, quantity) select m.csp_id, m.order_id, sum(m.price), count(m.mac_id) from machine m where m.order_id="2014" group by m.csp_id;
-#select m.mac_id, m.ip_address, m.price from machine m join csp c on c.csp_id=m.csp_id where m.cpu_cores=sp_cpu and m.ram=sp_ram and m.disk_size=sp_disk_size order by m.price;
-#update machine set customer_id=sp_customer_id  where customer_id is NULL  order by price limit sp_no_of_machines;
+		insert into receives (csp_id, order_id, csp_cost, quantity) select m.csp_id, m.order_id, sum(m.price), count(m.mac_id) from machine m where m.order_id=temp_last_order_id group by m.csp_id;
+        
+		else
+		select 'Not enough resources available!!';
+		end if;
 
-else
-select 'Not enough resources available!!';
-end if;
-
-end$$
-delimiter ;
-
-delimiter $$
-create definer=`root`@`localhost` procedure `sp_create_csp`(
-in c_email_id varchar(200),
-in c_name varchar(200),
-in c_password varchar(200),
-in c_join_date date,
-in c_bank_account_number int
-)
-begin
-if ( select exists (select 1 from csp where csp_email_id = c_email_id) ) then
-
-select 'username exists !!';
-
-else
-
-insert into csp
-(
-  csp_email_id,
-  csp_name,
-  csp_password,
-  csp_join_date,
-  csp_bank_account_number
-)
-values
-(
-  1
-);
-
-end if;
 end$$
 delimiter ;
