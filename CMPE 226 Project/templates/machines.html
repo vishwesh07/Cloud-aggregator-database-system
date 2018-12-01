@@ -17,8 +17,8 @@
     <div class="header">
         <nav>
             <ul class="nav nav-pills pull-right">
-                <li role="presentation" class="active"><a href="showCustomerAccountDisplay">Dashboard</a></li>
-                <li role="presentation" ><a href="showMachines">Machines Rented</a></li>
+                <li role="presentation" ><a href="showCustomerAccountDisplay">Dashboard</a></li>
+                <li role="presentation" class="active"><a href="showMachines">Machines Rented</a></li>
                 <li role="presentation" ><a href="showOrderHistory">Order History</a></li>
                 <li role="presentation"><a href="showBilling">Billing</a></li>
                 <li role="presentation"><a href="showProfile">Profile</a></li>
@@ -34,11 +34,11 @@
             <thead class = "table-dark">
             <tr>
                 <th>Order_Id</th>
-                <th>Order Start Date</th>
-                <th>Number of Machines</th>
                 <th>CPU_Cores</th>
                 <th>RAM</th>
                 <th>Disk Size</th>
+                <th>Number of Machines</th>
+                <th>Order Cost</th>
             </tr>
             </thead>
             <tbody class="currentOrders">
@@ -77,7 +77,7 @@
                         <div class="form-group row">
                             <label for="inputDiskSize" class="col-4 col-form-label">Disk Size*</label>
                             <div class="col-8">
-                                <input id="inputDiskSize" name="inputDiskSize" value="2TB" placeholder="Enter Disk Size in Giga Bytes" class="form-control here">
+                                <input id="inputDiskSize" name="inputDiskSize" value="250" placeholder="Enter Disk Size in Giga Bytes" class="form-control here" type="number">
                             </div>
                         </div>
                         <div class="form-group row">
