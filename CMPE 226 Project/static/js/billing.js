@@ -1,7 +1,7 @@
 $(function() {
     $('document').ready(function() {
         $.ajax({
-            url: '/bills?customer_id='+sessionStorage.getItem("id"),
+            url: '/bill/current?customer_id='+sessionStorage.getItem("id"),
             data: $('form').serialize(),
             type: 'GET',
             success: function(response) {
