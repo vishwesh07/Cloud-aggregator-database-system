@@ -36,6 +36,10 @@ def showLogin():
 def showCustomerAccountDisplay():
     return render_template('customerAccountDisplay.html')
 
+@app.route('/showMachines')
+def showMachines():
+    return render_template('machines.html')
+
 @app.route('/showOrderHistory')
 def showOrderHistory():
     return render_template('orderHistory.html')
@@ -51,10 +55,6 @@ def showProfile():
 @app.route('/showHelp')
 def showHelp():
     return render_template('help.html')
-
-@app.route('/showAdmin')
-def showAdmin():
-    return render_template('admin.html')
 
 @app.route('/showCsp')
 def showCsp():
@@ -76,13 +76,45 @@ def showCspProfile():
 def showCspHelp():
     return render_template('cspHelp.html')
 
-@app.route('/showAdminCustomer')
-def showAdminCustomer():
-    return render_template('adminCustomer.html')
-
 @app.route('/showCspBilling')
 def showCspBilling():
     return render_template('cspBilling.html')
+
+@app.route('/showAdmin')
+def showAdmin():
+    return render_template('admin.html')
+
+@app.route('/showAdminMachines')
+def showAdminMachines():
+    return render_template('adminMachines.html')
+
+@app.route('/showAdminOrder')
+def showAdminOrder():
+    return render_template('adminOrder.html')
+
+@app.route('/showAdminCustomers')
+def showAdminCustomers():
+    return render_template('adminCustomers.html')
+
+@app.route('/showAdminCSP')
+def showAdminCSP():
+    return render_template('adminCSP.html')
+
+@app.route('/showAdminBilling')
+def showAdminBilling():
+    return render_template('adminBilling.html')
+
+@app.route('/showAdminProfile')
+def showAdminProfile():
+    return render_template('adminProfile.html')
+
+@app.route('/showAdminComplaints')
+def showAdminComplaints():
+    return render_template('adminComplaints.html')
+
+@app.route('/showAdminOffer')
+def showAdminOffer():
+    return render_template('adminOffer.html')
 
 @app.route('/myCSPs', methods=['GET'])
 def myCSPs():
