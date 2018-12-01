@@ -17,17 +17,26 @@ def sql_select(query):
     rows = cursor.fetchall()
     return rows
 
-def sql_insert(query, var):
+def sql_insert(query, var=None):
     cursor = conn.cursor()
-    cursor.execute(query, var)
+    if var:
+        cursor.execute(query, var)
+    else:
+        cursor.execute(query)
     conn.commit()
 
-def sql_delete(query):
+def sql_delete(query,var=None):
     cursor = conn.cursor()
-    cursor.execute(query, var)
+    if var:
+        cursor.execute(query, var)
+    else:
+        cursor.execute(query)
+    conn.commit()
 
-def sql_update(query, var):
+def sql_update(query, var=None):
     cursor = conn.cursor()
-    cursor.execute(query, var)
-    rows = cursor.fetchall()
-    return rows
+    if var:
+        cursor.execute(query, var)
+    else:
+        cursor.execute(query)
+    conn.commit()

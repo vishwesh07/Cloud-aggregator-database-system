@@ -4,7 +4,7 @@ from flaskext.mysql import MySQL
 from pymongo import MongoClient
 from werkzeug import generate_password_hash, check_password_hash
 from crud import sql_select, sql_delete, sql_update, sql_insert
-import datetime
+from datetime import datetime
 
 app = Flask(__name__)
 mysql = MySQL()
@@ -146,15 +146,116 @@ def orderHistory():
     except Exception as e:
         return json.dumps({'error': str(e)})
 
-@app.route('/bills', methods=['GET'])
-def bill():
+@app.route('/bill/current', methods=['GET'])
+def current_bill():
     try:
-        _customer_id = request.args['customer_id']
-        if _email and _role == "customer":
-            print('select * from bill where customer_id="'+_customer_id+'"')
-            return json.dumps({'results': sql_select('select * from bill where customer_id="'+_customer_id+'"')})
+        _id = request.args['id']
+        _role = request.args['role']
+        if _id and _role == "customer":
+            # print('select * from customer_bill where customer_id="'+_id+'"')
+            return json.dumps({'results': sql_select('select * from customer_bill where customer_id="'+_id+'" and is_paid is False;')})
+        elif _id and _role == "ca":
+            return json.dumps({'results': sql_select('select * from ca_bill where ca_id="' + _id + '" and is_paid is False;')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/bill/history', methods=['GET'])
+def bill_history():
+    try:
+        _id = request.args['id']
+        _role = request.args['role']
+        if _id and _role == "customer":
+            return json.dumps({'results': sql_select('select * from customer_bill where customer_id="'+_id+'" and is_paid is True;')})
+        elif _id and _role == "ca":
+            return json.dumps({'results': sql_select('select * from ca_bill where ca_id="' + _id + '" and is_paid is True;')})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/revenue/current', methods=['GET'])
+def current_revenue():
+    try:
+        _id = request.args['id']
+        _role = request.args['role']
+        if _id and _role == "ca":
+            # print('select * from customer_bill where customer_id="'+_id+'"')
+            return json.dumps({'results': sql_select('select * from customer_bill where ca_id="'+_id+'" and is_paid is False;')})
+        elif _id and _role == "csp":
+            return json.dumps({'results': sql_select('select * from ca_bill where csp_id="' + _id + '" and is_paid is False;')})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/revenue/history', methods=['GET'])
+def revenue_history():
+    try:
+        _id = request.args['id']
+        _role = request.args['role']
+        if _id and _role == "ca":
+            # print('select * from customer_bill where customer_id="'+_id+'"')
+            return json.dumps(
+                {'results': sql_select('select * from customer_bill where ca_id="' + _id + '" and is_paid is True;')})
+        elif _id and _role == "csp":
+            return json.dumps(
+                {'results': sql_select('select * from ca_bill where csp_id="' + _id + '" and is_paid is True;')})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/bill/generate', methods=['GET'])
+def generate_bill():
+    try:
+        _id = request.args['id']
+        _role = request.args['role']
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        messages = []
+        if _id and _role == "ca":
+            for ca_id, customer_id in sql_select('select * from onboards join order_ on order_.customer_id = onboards.customer_id and order_.ca_id = onboards.ca_id where ca_id="' + _id + '";'):
+                print("Generating bill for customer_id:", customer_id)
+                cursor.callproc('sp_generate_bill_ca', (datetime.now().month, datetime.now().year, ca_id, customer_id))
+                message = cursor.fetchall()
+                if len(message):
+                    print(message[0])
+                    messages.append(message[0])
+                    conn.commit()
+                else:
+                    return json.dumps({'Error': str(messages[0])}), 500
+            return json.dumps({'message': messages})
+        elif _id and _role == "csp":
+            for csp_id, ca_id in sql_select('select receives.csp_id, order_.ca_id from receives join order_ on order_.order_id = receives.order_id where receives.csp_id="' + _id + '";'):
+                print("Generating bill for ca_id:", ca_id)
+                cursor.callproc('sp_generate_bill_csp', (datetime.now().month, datetime.now().year, csp_id, ca_id))
+                message = cursor.fetchall()
+                if len(message):
+                    print(message[0])
+                    messages.append(message[0])
+                    conn.commit()
+                else:
+                    return json.dumps({'Error': str(messages[0])}), 500
+            return json.dumps({'message': messages})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error':str(e)})
+
+@app.route('/bill/pay', methods=['POST'])
+def pay_bill():
+    try:
+        _id = request.args['id']
+        _role = request.args['role']
+        _bill_id = request.args['bill_id']
+        if _id and _role == "customer":
+            sql_update('update bill set is_paid = True where customer_id=' + id + 'and bill_id=' + _bill_id + ' and is_paid = False;')
+            return json.dumps({'results':"Bill:"+str(_bill_id)+"is paid by customer:"+str(_id)})
+        elif _id and _role == "ca":
+            sql_update('update bill set is_paid = True where ca_id=' + id + 'and bill_id=' + _bill_id + ' and is_paid = False;')
+            return json.dumps({'results': "Bill:" + str(_bill_id) + "is paid by ca:" + str(_id)})
     except Exception as e:
         return json.dumps({'error': str(e)})
 
