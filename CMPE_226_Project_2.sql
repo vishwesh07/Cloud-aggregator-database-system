@@ -61,6 +61,7 @@ create table bill
   customer_id int,
   month int not null,
   year int not null,
+  is_paid bool default False,
   primary key(bill_id)
 );
 
@@ -70,6 +71,7 @@ create table offer
   offer_name varchar(255) not null,
   discount int not null,
   ca_id int not null,
+  is_used bool default False,
   primary key(offer_id)
 );
 
@@ -129,6 +131,7 @@ create table csp_contracts
 create view order_customer as select order_id, order_date, number_of_machines, ca_id, customer_id, cpu_cores, ram, disk_size, order_end_date, order_amount from order_;
 create view order_csp as select ord.order_id, ord.order_date, ord.number_of_machines, ord.ca_id, r.csp_id, ord.cpu_cores, ord.ram, ord.disk_size, ord.order_end_date, ord.order_cost
 from order_ ord, receives r where ord.order_id=r.order_id;
+create view machine_customer as select mac_id, disk_size, ram, cpu_cores, ip_address, order_id from machine;
 
 alter table order_ add constraint fk_order_ca_id foreign key (ca_id) references ca(ca_id) ;
 alter table order_ add constraint fk_order_customer_id foreign key (customer_id) references customer(customer_id);
@@ -295,25 +298,25 @@ insert into onboards values (4324323,11241);
 
 
 ##### Offer
-insert into offer values (4321,'Big Bang Offer',9,12121);
-insert into offer values (4322,'Bumpper Offer',11,232323);
-insert into offer values (4323,'Super Deal Offer',5,232323);
-insert into offer values (4324,'Platinum Offer',20,4324323);
-insert into offer values (4325,'Gold Bang Offer',15,4324323);
+insert into offer values (4321,'Big Bang Offer',9,12121, False);
+insert into offer values (4322,'Bumpper Offer',11,232323, False);
+insert into offer values (4323,'Super Deal Offer',5,232323, False);
+insert into offer values (4324,'Platinum Offer',20,4324323, False);
+insert into offer values (4325,'Gold Bang Offer',15,4324323, False);
 
 ##### Bill
-insert into bill values (0001,5000,1234,12121,11224,'01','2000');
-insert into bill values (0002,1000,12361,12121,11227,'01','2000');
-insert into bill values (0003,2000,12364,12121,11220,'01','2000');
+insert into bill values (0001,5000,1234,12121,11224,'01','2000', False);
+insert into bill values (0002,1000,12361,12121,11227,'01','2000', False);
+insert into bill values (0003,2000,12364,12121,11220,'01','2000', False);
 
 
-insert into bill values (1004,3000,1235,232323,11225,'02','2000');
-insert into bill values (1005,53000,12362,232323,11228,'03','2000');
-insert into bill values (1006,51000,1236,232323,11241,'01','2000');
+insert into bill values (1004,3000,1235,232323,11225,'02','2000', False);
+insert into bill values (1005,53000,12362,232323,11228,'03','2000', False);
+insert into bill values (1006,51000,1236,232323,11241,'01','2000', False);
 
-insert into bill values (2004,4000,1236,4324323,11226,'07','2000');
-insert into bill values (2005,43000,12364,4324323,11229,'08','2000');
-insert into bill values (2006,41000,1235,4324323,11241,'09','2000');
+insert into bill values (2004,4000,1236,4324323,11226,'07','2000', False);
+insert into bill values (2005,43000,12364,4324323,11229,'08','2000', False);
+insert into bill values (2006,41000,1235,4324323,11241,'09','2000', False);
 
 ##### Order
 insert into order_ values(0010,'2000-02-01',5,12121,11224,16,16,"1TB",'2000-10-10', 40, 30);
@@ -458,3 +461,171 @@ begin
 
 end$$
 delimiter ;
+
+delimiter $$
+use multicloud $$
+create definer=`root`@`localhost` procedure `sp_generate_bill_csp`(
+in sp_month int,
+in sp_year int,
+in sp_csp_id int,
+in sp_ca_id int
+)
+begin
+
+declare order_month int;
+declare order_day int;
+declare order_cost int;
+declare total_monthly_bill int;
+declare finished int default 0;
+declare ca_order_cursor cursor for select month(o.order_date) as order_month, day(o.order_date) as order_day, r.csp_cost as order_cost
+from order_ as o join receives as r on o.order_id = r.order_id and r.csp_id = sp_csp_id and o.ca_id = sp_ca_id and o.order_end_date = null;
+declare continue handler for not found set finished = 1;
+set total_monthly_bill = 0;
+
+open ca_order_cursor;
+
+get_ca_order: LOOP
+ FETCH ca_order_cursor INTO order_month, order_day, order_cost;
+ IF finished = 1 THEN
+  LEAVE get_ca_order;
+ END IF;
+ -- compute cost
+ IF order_month < sp_month THEN
+  set total_monthly_bill = total_monthly_bill + (30 * order_cost);
+ ELSEIF order_month = sp_month THEN
+  set total_monthly_bill = total_monthly_bill + ( (30 - order_day + 1) * order_cost);
+ END IF;
+END LOOP get_ca_order;
+
+close ca_order_cursor;
+
+insert into bill (bill_amount, csp_id, ca_id, customer_id, month, year, is_paid) values (total_monthly_bill, sp_csp_id, sp_ca_id, null, sp_month, sp_year, False);
+
+select concat("New bill with cost: ", total_monthly_bill," generated for ca: ", sp_ca_id, " by csp: ", sp_csp_id, " for month: ", sp_month, " year: ", sp_year);
+end$$
+delimiter ;
+
+delimiter $$
+use multicloud $$
+create definer=`root`@`localhost` procedure `sp_generate_bill_ca`(
+in sp_month int,
+in sp_year int,
+in sp_ca_id int,
+in sp_customer_id int
+)
+begin
+
+declare order_month int;
+declare order_day int;
+declare order_amount int;
+declare total_monthly_bill int;
+declare id int;
+declare discount int;
+declare offer_discount int default 0;
+declare offer_id int default null;
+declare finished int default 0;
+declare customer_order_cursor cursor for select month(o.order_date) as order_month, day(o.order_date) as order_day, o.order_amount as order_amount
+from order_ as o join customer as c on o.customer_id = c.customer_id and o.customer_id = sp_customer_id and o.ca_id = sp_ca_id and o.order_end_date = null;
+declare customer_offer_cursor cursor for select o.offer_id, o.discount
+from offer as o join customer as c on o.offer_id = c.offer_id and o.ca_id = sp_ca_id and o.is_used is False and (sp_month < month(o.valid_till) or (month(o.valid_till) = sp_month and 30 <= day(o.valid_till))) and year(o.valid_till) <= sp_year;
+declare continue handler for not found set finished = 1;
+set total_monthly_bill = 0;
+
+open customer_order_cursor;
+
+get_customer_order: LOOP
+ FETCH customer_order_cursor INTO order_month, order_day, order_amount;
+ IF finished = 1 THEN
+  LEAVE get_customer_order;
+ END IF;
+ -- compute cost
+ IF order_month < sp_month THEN
+  set total_monthly_bill = total_monthly_bill + (30 * order_amount);
+ ELSEIF order_month = sp_month THEN
+  set total_monthly_bill = total_monthly_bill + ( (30 - order_day + 1) * order_amount);
+ END IF;
+END LOOP get_customer_order;
+
+close customer_order_cursor;
+
+open customer_order_cursor;
+
+get_customer_offer: LOOP
+ FETCH customer_offer_cursor INTO id, discount;
+ IF finished = 1 THEN
+  LEAVE get_customer_offer;
+ END IF;
+ -- find max offer
+ IF offer_discount < discount THEN
+  set offer_discount = discount;
+  set offer_id = id;
+ END IF;
+END LOOP get_customer_offer;
+
+close customer_offer_cursor;
+
+IF (offer_id is not null) and (offer_discount != 0) THEN
+ set total_monthly_bill = convert(total_monthly_bill * ((100 - offer_discount)/100),unsigned int);
+ update offer as o set o.is_used = True where o.offer_id = offer_id and o.discount = offer_discount;
+ END IF;
+
+insert into bill (bill_amount, csp_id, ca_id, customer_id, month, year, is_paid) values (total_monthly_bill, null, sp_ca_id, sp_customer_id, sp_month, sp_year, False);
+
+select concat("New bill with cost: ", total_monthly_bill, " with discount: ", offer_discount," generated for customer: ", sp_customer_id, " by ca: ", sp_ca_id, " for month: ", sp_month, " year: ", sp_year);
+
+end$$
+delimiter ;
+
+###### Stored Procedure to update CA delimiter 
+delimiter $$
+use multicloud $$
+create definer=`root`@`localhost` procedure `sp_update_ca`(
+    in sp_id int, 		
+    in sp_email_id varchar(255) , 		
+    in sp_name varchar(255) , 		
+    in sp_password varchar(255), 		
+    in sp_bank_account_number int
+) 	
+begin 	
+    if (select exists (select 1 from ca where ca_id = sp_id)) then 		 
+		update ca set ca_name = sp_name, ca_email_id = sp_email_id, ca_password = sp_password, ca_bank_account_number = sp_bank_account_number where ca_id=sp_id;
+    else
+        select 'Not enough resources available!!';
+    end if;
+end$$ 
+delimiter ;
+
+###### Stored Procedure to update CSP delimiter $$ 
+delimiter $$
+use multicloud $$
+create definer=`root`@`localhost` procedure `sp_update_csp`( 		 
+    in sp_id int, 		
+    in sp_email_id varchar(255) , 		
+    in sp_name varchar(255) , 		
+    in sp_password varchar(255), 		
+    in sp_bank_account_number int 	
+) 	
+begin 	
+    if (select exists (select 1 from csp where csp_id = sp_id)) then 		 
+        update csp set csp_name = sp_name, csp_email_id = sp_email_id, csp_password = sp_password, csp_bank_account_number = sp_bank_account_number where csp_id = sp_id; 	
+    else 		
+        select 'Not enough resources available!!'; 	
+    end if; 	
+end$$ delimiter ; 
+
+###### Stored Procedure to update customer delimiter $$ 
+delimiter $$
+use multicloud $$
+create definer=`root`@`localhost` procedure `sp_update_customer`( 		 
+    in sp_id int, 		
+    in sp_email_id varchar(255) , 		
+    in sp_name varchar(255) , 		
+    in sp_password varchar(255), 		
+    in sp_bank_account_number int 	) 	
+begin 	
+    if (select exists (select 1 from customer where customer_id = sp_id)) then 		 
+        update customer set customer_name = sp_name, customer_email_id = sp_email_id, customer_password = sp_password, customer_bank_account = sp_bank_account_number where customer_id = sp_id; 	
+	else 		
+        select 'Not enough resources available!!'; 	
+    end if; 	
+end$$ delimiter ; 

@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, json, jsonify
 from flaskext.mysql import MySQL
-from flask_pymongo import PyMongo
+# from flask_pymongo import PyMongo
+from pymongo import MongoClient
 from werkzeug import generate_password_hash, check_password_hash
 from crud import sql_select, sql_delete, sql_update, sql_insert
+import datetime
 
 app = Flask(__name__)
 mysql = MySQL()
@@ -15,10 +17,12 @@ app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
 # MongoDB configurations
-app.config['MONGO_DBNAME'] = 'multicloud'
-app.config['MONGO_URI'] = 'mongodb://localhost:27017/multicloud'
+# app.config['MONGO_DBNAME'] = 'multicloud'
+# app.config['MONGO_URI'] = 'mongodb://localhost:27017/multicloud'
+# mongodb = PyMongo(app)
+client = MongoClient('mongodb://localhost:27017/')
+mongodb = client['multicloud']
 
-mongo = PyMongo(app)
 
 @app.route('/')
 def main():
@@ -36,6 +40,10 @@ def showLogin():
 def showCustomerAccountDisplay():
     return render_template('customerAccountDisplay.html')
 
+@app.route('/showMachines')
+def showMachines():
+    return render_template('machines.html')
+
 @app.route('/showOrderHistory')
 def showOrderHistory():
     return render_template('orderHistory.html')
@@ -51,10 +59,6 @@ def showProfile():
 @app.route('/showHelp')
 def showHelp():
     return render_template('help.html')
-
-@app.route('/showAdmin')
-def showAdmin():
-    return render_template('admin.html')
 
 @app.route('/showCsp')
 def showCsp():
@@ -76,13 +80,45 @@ def showCspProfile():
 def showCspHelp():
     return render_template('cspHelp.html')
 
-@app.route('/showAdminCustomer')
-def showAdminCustomer():
-    return render_template('adminCustomer.html')
-
 @app.route('/showCspBilling')
 def showCspBilling():
     return render_template('cspBilling.html')
+
+@app.route('/showAdmin')
+def showAdmin():
+    return render_template('admin.html')
+
+@app.route('/showAdminMachines')
+def showAdminMachines():
+    return render_template('adminMachines.html')
+
+@app.route('/showAdminOrder')
+def showAdminOrder():
+    return render_template('adminOrder.html')
+
+@app.route('/showAdminCustomers')
+def showAdminCustomers():
+    return render_template('adminCustomers.html')
+
+@app.route('/showAdminCSP')
+def showAdminCSP():
+    return render_template('adminCSP.html')
+
+@app.route('/showAdminBilling')
+def showAdminBilling():
+    return render_template('adminBilling.html')
+
+@app.route('/showAdminProfile')
+def showAdminProfile():
+    return render_template('adminProfile.html')
+
+@app.route('/showAdminComplaints')
+def showAdminComplaints():
+    return render_template('adminComplaints.html')
+
+@app.route('/showAdminOffer')
+def showAdminOffer():
+    return render_template('adminOffer.html')
 
 @app.route('/myCSPs', methods=['GET'])
 def myCSPs():
@@ -142,6 +178,23 @@ def orderHistory():
     except Exception as e:
         return json.dumps({'error': str(e)})
 
+@app.route('/getMachines', methods=['GET'])
+def getMachines():
+    try:
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
+        _ca_id = request.args['inputCaId']
+        if _id and _ca_id and _role == "customer":
+            return json.dumps({'results': sql_select('select m.*, ord.ca_id from order_customer ord join machine_customer m on ord.order_id=m.order_id where ord.customer_id="'+_id+'" and ord.ca_id="'+ _ca_id +'" and order_end_date is null')})
+        elif _id and _ca_id and _role == "csp":
+            return json.dumps({'results': sql_select('select m.* from order_csp r join machine m on r.order_id=m.order_id where r.csp_id="' + _id + '" and r.ca_id="' + _ca_id + '" and order_end_date is null')})
+        elif _id and _ca_id and _role == "ca":
+            return json.dumps({'results': sql_select('select m.* from order_  ord join machine m on ord.order_id=m.order_id where ord.ca_id="' + _ca_id + '" and order_end_date is null')})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
 @app.route('/bills', methods=['GET'])
 def bill():
     try:
@@ -163,19 +216,19 @@ def login():
         _role = request.args['inputRole']
 
         if _email and _role == "customer":
-            userRow = sql_select('select * from customer where customer_email_id="'+_email+'"')
+            userRow = sql_select('select customer_id, customer_email_id, customer_name, customer_password, customer_bank_account from customer where customer_email_id="'+_email+'"')
             if check_password_hash(userRow[0][3], _password):
                 return json.dumps({'results': userRow})
             else:
                 return json.dumps({'error': 'Invalid password'}), 500
         elif _email and _role == "ca":
-            userRow = sql_select('select * from ca where ca_email_id="'+_email+'"')
-            if check_password_hash(userRow[0][4], _password):
+            userRow = sql_select('select ca_id, ca_email_id, ca_name, ca_password, ca_bank_account_number from ca where ca_email_id="'+_email+'"')
+            if check_password_hash(userRow[0][3], _password):
                 return json.dumps({'results': userRow})
             else:
                 return json.dumps({'error': 'Invalid password'}), 500
         elif _email and _role == "csp":
-            userRow = sql_select('select * from csp where csp_email_id="'+_email+'"')
+            userRow = sql_select('select csp_id, csp_email_id, csp_name, csp_password, csp_bank_account_number from csp where csp_email_id="'+_email+'"')
             if check_password_hash(userRow[0][3], _password):
                 return json.dumps({'results': userRow})
             else:
@@ -307,7 +360,56 @@ def updateProfile():
                     return json.dumps({'error': str(data[0])})
             else:
                 return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
 
+@app.route('/help', methods=['POST'])
+def help():
+    try:
+        email = request.args['email']
+        role = request.args['role']
+        problem_title = request.form['problemTitle']
+        problem_description = request.form['problemDescription']
+        if email and role and problem_title and problem_description:
+            record = {
+                "email": email,
+                "role": role,
+                "problem_title": problem_title,
+                "problem_description": problem_description,
+                "date": datetime.datetime.utcnow(),
+                "resolved": "no"
+            }
+            tickets = mongodb.tickets
+            ticket_id = tickets.insert(record)
+            # print(ticket_id, tickets.find_one({'_id': ticket_id}))
+            # print(dict(tickets.find_one({'_id': ticket_id})))
+            return jsonify({"result": "ticket created with id"+str(ticket_id)})
+        else:
+            return json.dumps({'error': 'Enter required fields'}), 500
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/getTickets', methods=['GET'])
+def get_tickets():
+    try:
+        tickets_array = []
+        email = request.args['email']
+        role = request.args['role']
+        if email and role:
+            tickets = mongodb.tickets
+            user_tickets = tickets.find({"email":email, "role": role})
+            for ticket in user_tickets:
+                # print(dict(ticket))
+                temp = dict()
+                for key in ticket:
+                    if key != '_id':
+                        temp[key] = ticket[key]
+                    else:
+                        temp[key] = str(ticket[key])
+                tickets_array.append(temp)
+            return jsonify({"result":tickets_array})
+        else:
+            return json.dumps({'error': 'Enter required fields'}), 500
     except Exception as e:
         return json.dumps({'error': str(e)})
 

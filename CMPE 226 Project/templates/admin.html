@@ -17,23 +17,26 @@
     <div class="container" style="font-size:small">
       <div class="header">
         <nav>
-          <ul class="nav nav-pills pull-right">
-     <li role="presentation" class="active"><a href="showCsp">Dashboard</a></li>
-              <li role="presentation" ><a href="showCspMachines">Machines</a></li>
-            <li role="presentation" ><a href="showCspOrderHistory">Order History</a></li>
-            <li role="presentation"><a href="showCspBilling">Billing</a></li>
-            <li role="presentation"><a href="showCspProfile">Profile</a></li>
-			    <li role="presentation" ><a href="showCspHelp">Help</a></li>
+              <ul class="nav nav-pills pull-right">
+     <li role="presentation" class="active"><a href="showAdmin">Dashboard</a></li>
+              <li role="presentation" ><a href="showAdminMachines">Machines</a></li>
+            <li role="presentation" ><a href="showAdminOrder">Orders</a></li>
+            <li role="presentation"><a href="showAdminCustomers">Customer</a></li>
+            <li role="presentation"><a href="showAdminCSP">CSP</a></li>
+                   <li role="presentation"><a href="showAdminOffer">Offers</a></li>
+                   <li role="presentation"><a href="showAdminBilling">Billing</a></li>
+		    <li role="presentation" ><a href="showAdminComplaints">Complaints</a></li>
+                 <li role="presentation" ><a href="showAdminProfile">Profile</a></li>
 				<li role="presentation" ><a href="/">Logout</a></li>
           </ul>
         </nav>
-        <h4 class="text-muted">CSP Dashboard</h4>
+        <h4 class="text-muted">Admin Dashboard</h4>
       </div>
 
       <div class="jumbotron">
-        <h2> <b>Cloud Service Provider</b></h2>
+        <h2> <b>Ongoing Orders</b></h2>
 
-        <center><b><h3>Current Orders</h3></b></center>
+
           <table class="table table-bordered">
 
         <thead class = "table-dark">
@@ -45,7 +48,9 @@
                 <th>CPU_Cores</th>
                 <th>Disk Size</th>
                  <th>No_Of_Machines</th>
-                 <th>Price</th>
+                <th>CSP</th>
+                 <th>Customer_Id</th>
+                <th>Amount</th>
             </tr>
 
         </thead>
@@ -53,32 +58,38 @@
 
         <tbody>
             <tr>
-                <td>4</td>
-                <td>8</td>
-                <td>18</td>
-                <td>64</td>
-                <td>20</td>
-                <td>120</td>
-                <td>120</td>
-
-            </tr>
-            <tr>
-                 <td>4</td>
-                <td>8</td>
-                <td>18</td>
-                <td>64</td>
-                <td>20</td>
-                <td>120</td>
+                <td>1</td>
+                <td>John</td>
+               <td>18</td>
+                <td>123456789</td>
+                <td>12</td>
+                <td>AWS</td>
+                <td>12</td>
+                <td>AWS</td>
                 <td>120</td>
 
             </tr>
             <tr>
-              <td>4</td>
-                <td>8</td>
+                <td>2</td>
+                <td>Peter</td>
                 <td>18</td>
-                <td>64</td>
-                <td>20</td>
+                <td>123456789</td>
+                  <td>12</td>
+              <td>AWS</td>
+                <td>12</td>
+                <td>AWS</td>
                 <td>120</td>
+
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>John</td>
+                <td>18</td>
+                <td>123456789</td>
+                  <td>20</td>
+                <td>AWS</td>
+                <td>12</td>
+                <td>AWS</td>
                 <td>120</td>
 
             </tr>
@@ -86,14 +97,23 @@
         </tbody>
 		</table>
 
-        <div class="panel panel-danger">
-                <div class="panel-heading" ><h4>Total Revenue Generated : 654</h4></div>
+
+
+
+                <div class="panel panel-danger">
+                <div class="panel-heading" ><h4></h4> </div>
 
     </div>
 
 
-            </div>
 
+
+
+   <div class="panel panel-primary">
+                <div class="panel-heading" ><h4> Total Profit Earned: </h4> </div>
+
+
+</div>
 
 
 

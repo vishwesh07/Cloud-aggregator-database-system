@@ -17,34 +17,39 @@
     <div class="container" style="font-size:small">
       <div class="header">
         <nav>
-          <ul class="nav nav-pills pull-right">
-      <li role="presentation" ><a href="showCsp">Dashboard</a></li>
-              <li role="presentation" ><a href="showCspMachines">Machines</a></li>
-            <li role="presentation" ><a href="showCspOrderHistory">Order History</a></li>
-            <li role="presentation" class="active"><a href="showCspBilling">Billing</a></li>
-            <li role="presentation"><a href="showCspProfile">Profile</a></li>
-			    <li role="presentation" ><a href="showCspHelp">Help</a></li>
+              <ul class="nav nav-pills pull-right">
+     <li role="presentation" ><a href="showAdmin">Dashboard</a></li>
+              <li role="presentation" class="active"><a href="showAdminMachines">Machines</a></li>
+            <li role="presentation" ><a href="showAdminOrder">Orders</a></li>
+            <li role="presentation"><a href="showAdminCustomers">Customer</a></li>
+            <li role="presentation"><a href="showAdminCSP">CSP</a></li>
+                          <li role="presentation"><a href="showAdminOffer">Offers</a></li>
+                    <li role="presentation"><a href="showAdminBilling">Billing</a></li>
+			  	    <li role="presentation" ><a href="showAdminComplaints">Complaints</a></li>
+                 <li role="presentation" ><a href="showAdminProfile">Profile</a></li>
 				<li role="presentation" ><a href="/">Logout</a></li>
           </ul>
         </nav>
-        <h4 class="text-muted">CSP Dashboard</h4>
+        <h4 class="text-muted">Admin Dashboard</h4>
       </div>
 
       <div class="jumbotron">
-        <h2> <b>Cloud Service Provider</b></h2>
-        <h3>Billing History</h3>
+        <h2> <b>Cloud Aggregator</b></h2>
+            <h3>Machines Info.</h3>
 
-
-                <table class="table table-bordered">
+          <table class="table table-bordered">
 
         <thead class = "table-dark">
 
             <tr>
-                <th>Bill_Id</th>
-                <th>Month</th>
-                <th>Year</th>
-                <th>Amount</th>
-                <th>Is_Paid</th>
+                <th>Machine_Id</th>
+                <th>IP_address</th>
+                <th>RAM</th>
+                <th>CPU_Cores</th>
+                <th>Disk Size</th>
+                 <th>No_Of_Machines</th>
+                 <th>Owned By</th>
+                 <th>Rented To</th>
             </tr>
 
         </thead>
@@ -54,33 +59,53 @@
             <tr>
                 <td>1</td>
                 <td>John</td>
-                <td>Carter</td>
+                <td>8</td>
+               <td>18</td>
                 <td>123456789</td>
-                <td>Yes</td>
+                <td>12</td>
+                <td>AWS</td>
+                   <td>1214</td>
             </tr>
             <tr>
                 <td>2</td>
                 <td>Peter</td>
-                <td>Parker</td>
+                <td>16</td>
+                <td>18</td>
                 <td>123456789</td>
-                 <td>Yes</td>
+                  <td>12</td>
+              <td>AWS</td>
+                    <td>1215</td>
             </tr>
             <tr>
                 <td>3</td>
                 <td>John</td>
-                <td>Rambo</td>
+                <td>12</td>
+                <td>18</td>
                 <td>123456789</td>
-                 <td>Yes</td>
+                  <td>20</td>
+                <td>AWS</td>
+                 <td>1216</td>
             </tr>
 
         </tbody>
 		</table>
 
 
- <div class="panel panel-danger">
-                <div class="panel-heading" > </div>
+           <div class="panel panel-danger">
+                <div class="panel-heading" ><h5> </h5> </div>
 
     </div>
+
+
+
+
+
+
+
+
+
+
+
 
 
 
