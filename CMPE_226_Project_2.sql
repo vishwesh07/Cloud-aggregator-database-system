@@ -131,6 +131,7 @@ create table csp_contracts
 create view order_customer as select order_id, order_date, number_of_machines, ca_id, customer_id, cpu_cores, ram, disk_size, order_end_date, order_amount from order_;
 create view order_csp as select ord.order_id, ord.order_date, ord.number_of_machines, ord.ca_id, r.csp_id, ord.cpu_cores, ord.ram, ord.disk_size, ord.order_end_date, ord.order_cost
 from order_ ord, receives r where ord.order_id=r.order_id;
+create view machine_customer as select mac_id, disk_size, ram, cpu_cores, ip_address, order_id from machine;
 
 alter table order_ add constraint fk_order_ca_id foreign key (ca_id) references ca(ca_id) ;
 alter table order_ add constraint fk_order_customer_id foreign key (customer_id) references customer(customer_id);
@@ -518,6 +519,8 @@ declare order_month int;
 declare order_day int;
 declare order_amount int;
 declare total_monthly_bill int;
+declare id int;
+declare discount int;
 declare offer_discount int default 0;
 declare offer_id int default null;
 declare finished int default 0;
@@ -572,3 +575,57 @@ select concat("New bill with cost: ", total_monthly_bill, " with discount: ", of
 
 end$$
 delimiter ;
+
+###### Stored Procedure to update CA delimiter 
+delimiter $$
+use multicloud $$
+create definer=`root`@`localhost` procedure `sp_update_ca`(
+    in sp_id int, 		
+    in sp_email_id varchar(255) , 		
+    in sp_name varchar(255) , 		
+    in sp_password varchar(255), 		
+    in sp_bank_account_number int
+) 	
+begin 	
+    if (select exists (select 1 from ca where ca_id = sp_id)) then 		 
+		update ca set ca_name = sp_name, ca_email_id = sp_email_id, ca_password = sp_password, ca_bank_account_number = sp_bank_account_number where ca_id=sp_id;
+    else
+        select 'Not enough resources available!!';
+    end if;
+end$$ 
+delimiter ;
+
+###### Stored Procedure to update CSP delimiter $$ 
+delimiter $$
+use multicloud $$
+create definer=`root`@`localhost` procedure `sp_update_csp`( 		 
+    in sp_id int, 		
+    in sp_email_id varchar(255) , 		
+    in sp_name varchar(255) , 		
+    in sp_password varchar(255), 		
+    in sp_bank_account_number int 	
+) 	
+begin 	
+    if (select exists (select 1 from csp where csp_id = sp_id)) then 		 
+        update csp set csp_name = sp_name, csp_email_id = sp_email_id, csp_password = sp_password, csp_bank_account_number = sp_bank_account_number where csp_id = sp_id; 	
+    else 		
+        select 'Not enough resources available!!'; 	
+    end if; 	
+end$$ delimiter ; 
+
+###### Stored Procedure to update customer delimiter $$ 
+delimiter $$
+use multicloud $$
+create definer=`root`@`localhost` procedure `sp_update_customer`( 		 
+    in sp_id int, 		
+    in sp_email_id varchar(255) , 		
+    in sp_name varchar(255) , 		
+    in sp_password varchar(255), 		
+    in sp_bank_account_number int 	) 	
+begin 	
+    if (select exists (select 1 from customer where customer_id = sp_id)) then 		 
+        update customer set customer_name = sp_name, customer_email_id = sp_email_id, customer_password = sp_password, customer_bank_account = sp_bank_account_number where customer_id = sp_id; 	
+	else 		
+        select 'Not enough resources available!!'; 	
+    end if; 	
+end$$ delimiter ; 

@@ -4,7 +4,7 @@ from flaskext.mysql import MySQL
 from pymongo import MongoClient
 from werkzeug import generate_password_hash, check_password_hash
 from crud import sql_select, sql_delete, sql_update, sql_insert
-import datetime
+from datetime import datetime
 
 app = Flask(__name__)
 mysql = MySQL()
@@ -178,15 +178,133 @@ def orderHistory():
     except Exception as e:
         return json.dumps({'error': str(e)})
 
-@app.route('/bills', methods=['GET'])
-def bill():
+@app.route('/getMachines', methods=['GET'])
+def getMachines():
     try:
-        _customer_id = request.args['customer_id']
-        if _email and _role == "customer":
-            print('select * from bill where customer_id="'+_customer_id+'"')
-            return json.dumps({'results': sql_select('select * from bill where customer_id="'+_customer_id+'"')})
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
+        _ca_id = request.args['inputCaId']
+        if _id and _ca_id and _role == "customer":
+            return json.dumps({'results': sql_select('select m.*, ord.ca_id from order_customer ord join machine_customer m on ord.order_id=m.order_id where ord.customer_id="'+_id+'" and ord.ca_id="'+ _ca_id +'" and order_end_date is null')})
+        elif _id and _ca_id and _role == "csp":
+            return json.dumps({'results': sql_select('select m.* from order_csp r join machine m on r.order_id=m.order_id where r.csp_id="' + _id + '" and r.ca_id="' + _ca_id + '" and order_end_date is null')})
+        elif _id and _ca_id and _role == "ca":
+            return json.dumps({'results': sql_select('select m.* from order_  ord join machine m on ord.order_id=m.order_id where ord.ca_id="' + _ca_id + '" and order_end_date is null')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/bill/current', methods=['GET'])
+def current_bill():
+    try:
+        _id = request.args['id']
+        _role = request.args['role']
+        if _id and _role == "customer":
+            # print('select * from customer_bill where customer_id="'+_id+'"')
+            return json.dumps({'results': sql_select('select * from customer_bill where customer_id="'+_id+'" and is_paid is False;')})
+        elif _id and _role == "ca":
+            return json.dumps({'results': sql_select('select * from ca_bill where ca_id="' + _id + '" and is_paid is False;')})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/bill/history', methods=['GET'])
+def bill_history():
+    try:
+        _id = request.args['id']
+        _role = request.args['role']
+        if _id and _role == "customer":
+            return json.dumps({'results': sql_select('select * from customer_bill where customer_id="'+_id+'" and is_paid is True;')})
+        elif _id and _role == "ca":
+            return json.dumps({'results': sql_select('select * from ca_bill where ca_id="' + _id + '" and is_paid is True;')})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/revenue/current', methods=['GET'])
+def current_revenue():
+    try:
+        _id = request.args['id']
+        _role = request.args['role']
+        if _id and _role == "ca":
+            # print('select * from customer_bill where customer_id="'+_id+'"')
+            return json.dumps({'results': sql_select('select * from customer_bill where ca_id="'+_id+'" and is_paid is False;')})
+        elif _id and _role == "csp":
+            return json.dumps({'results': sql_select('select * from ca_bill where csp_id="' + _id + '" and is_paid is False;')})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/revenue/history', methods=['GET'])
+def revenue_history():
+    try:
+        _id = request.args['id']
+        _role = request.args['role']
+        if _id and _role == "ca":
+            # print('select * from customer_bill where customer_id="'+_id+'"')
+            return json.dumps(
+                {'results': sql_select('select * from customer_bill where ca_id="' + _id + '" and is_paid is True;')})
+        elif _id and _role == "csp":
+            return json.dumps(
+                {'results': sql_select('select * from ca_bill where csp_id="' + _id + '" and is_paid is True;')})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/bill/generate', methods=['GET'])
+def generate_bill():
+    try:
+        _id = request.args['id']
+        _role = request.args['role']
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        messages = []
+        if _id and _role == "ca":
+            for ca_id, customer_id in sql_select('select * from onboards join order_ on order_.customer_id = onboards.customer_id and order_.ca_id = onboards.ca_id where ca_id="' + _id + '";'):
+                print("Generating bill for customer_id:", customer_id)
+                cursor.callproc('sp_generate_bill_ca', (datetime.now().month, datetime.now().year, ca_id, customer_id))
+                message = cursor.fetchall()
+                if len(message):
+                    print(message[0])
+                    messages.append(message[0])
+                    conn.commit()
+                else:
+                    return json.dumps({'Error': str(messages[0])}), 500
+            return json.dumps({'message': messages})
+        elif _id and _role == "csp":
+            for csp_id, ca_id in sql_select('select receives.csp_id, order_.ca_id from receives join order_ on order_.order_id = receives.order_id where receives.csp_id="' + _id + '";'):
+                print("Generating bill for ca_id:", ca_id)
+                cursor.callproc('sp_generate_bill_csp', (datetime.now().month, datetime.now().year, csp_id, ca_id))
+                message = cursor.fetchall()
+                if len(message):
+                    print(message[0])
+                    messages.append(message[0])
+                    conn.commit()
+                else:
+                    return json.dumps({'Error': str(messages[0])}), 500
+            return json.dumps({'message': messages})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error':str(e)})
+
+@app.route('/bill/pay', methods=['POST'])
+def pay_bill():
+    try:
+        _id = request.args['id']
+        _role = request.args['role']
+        _bill_id = request.args['bill_id']
+        if _id and _role == "customer":
+            sql_update('update bill set is_paid = True where customer_id=' + id + 'and bill_id=' + _bill_id + ' and is_paid = False;')
+            return json.dumps({'results':"Bill:"+str(_bill_id)+"is paid by customer:"+str(_id)})
+        elif _id and _role == "ca":
+            sql_update('update bill set is_paid = True where ca_id=' + id + 'and bill_id=' + _bill_id + ' and is_paid = False;')
+            return json.dumps({'results': "Bill:" + str(_bill_id) + "is paid by ca:" + str(_id)})
     except Exception as e:
         return json.dumps({'error': str(e)})
 
@@ -199,19 +317,19 @@ def login():
         _role = request.args['inputRole']
 
         if _email and _role == "customer":
-            userRow = sql_select('select * from customer where customer_email_id="'+_email+'"')
+            userRow = sql_select('select customer_id, customer_email_id, customer_name, customer_password, customer_bank_account from customer where customer_email_id="'+_email+'"')
             if check_password_hash(userRow[0][3], _password):
                 return json.dumps({'results': userRow})
             else:
                 return json.dumps({'error': 'Invalid password'}), 500
         elif _email and _role == "ca":
-            userRow = sql_select('select * from ca where ca_email_id="'+_email+'"')
-            if check_password_hash(userRow[0][4], _password):
+            userRow = sql_select('select ca_id, ca_email_id, ca_name, ca_password, ca_bank_account_number from ca where ca_email_id="'+_email+'"')
+            if check_password_hash(userRow[0][3], _password):
                 return json.dumps({'results': userRow})
             else:
                 return json.dumps({'error': 'Invalid password'}), 500
         elif _email and _role == "csp":
-            userRow = sql_select('select * from csp where csp_email_id="'+_email+'"')
+            userRow = sql_select('select csp_id, csp_email_id, csp_name, csp_password, csp_bank_account_number from csp where csp_email_id="'+_email+'"')
             if check_password_hash(userRow[0][3], _password):
                 return json.dumps({'results': userRow})
             else:
@@ -223,7 +341,6 @@ def login():
 
 @app.route('/placeOrder', methods=['POST'])
 def placeOrder():
-    print(request.form)
     try:
         _startDate = request.form['inputOrderStartDate']
         _ram = request.form['inputRam']
@@ -302,6 +419,50 @@ def signUp():
     # finally:
     #     cursor.close()
     #     conn.close()
+
+@app.route('/updateProfile', methods = ['POST'])
+def updateProfile():
+    print(request.args)
+    print(request.form)
+    try:
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
+        _name = request.form['inputName']
+        _email = request.form['inputEmail']
+        _password = request.form['inputPassword']
+        _bank_account_number = request.form['inputBankAccount']
+        _hashed_password = generate_password_hash(_password)
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        if _id and _role:
+            if _role == 'csp':
+                cursor.callproc('sp_update_csp', (_id, _email, _name, _hashed_password, _bank_account_number))
+                data = cursor.fetchall()
+                if len(data) is 0:
+                    conn.commit()
+                    return json.dumps({'message': 'CSP updated successfully !'})
+                else:
+                    return json.dumps({'error': str(data[0])})
+            elif _role == 'customer':
+                cursor.callproc('sp_update_customer', (_id, _email, _name, _hashed_password, _bank_account_number))
+                data = cursor.fetchall()
+                if len(data) is 0:
+                    conn.commit()
+                    return json.dumps({'message': 'Customer updated successfully !'})
+                else:
+                    return json.dumps({'error': str(data[0])})
+            elif _role == 'ca':
+                cursor.callproc('sp_update_ca', (_id, _email, _name, _hashed_password, _bank_account_number))
+                data = cursor.fetchall()
+                if len(data) is 0:
+                    conn.commit()
+                    return json.dumps({'message': 'CA updated successfully !'})
+                else:
+                    return json.dumps({'error': str(data[0])})
+            else:
+                return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
 
 @app.route('/help', methods=['POST'])
 def help():
