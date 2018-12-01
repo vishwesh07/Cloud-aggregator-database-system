@@ -187,7 +187,6 @@ def login():
 
 @app.route('/placeOrder', methods=['POST'])
 def placeOrder():
-    print(request.form)
     try:
         _startDate = request.form['inputOrderStartDate']
         _ram = request.form['inputRam']
@@ -266,6 +265,51 @@ def signUp():
     # finally:
     #     cursor.close()
     #     conn.close()
+
+@app.route('/updateProfile', methods = ['POST'])
+def updateProfile():
+    print(request.args)
+    print(request.form)
+    try:
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
+        _name = request.form['inputName']
+        _email = request.form['inputEmail']
+        _password = request.form['inputPassword']
+        _bank_account_number = request.form['inputBankAccount']
+        _hashed_password = generate_password_hash(_password)
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        if _id and _role:
+            if _role == 'csp':
+                cursor.callproc('sp_update_csp', (_id, _email, _name, _hashed_password, _bank_account_number))
+                data = cursor.fetchall()
+                if len(data) is 0:
+                    conn.commit()
+                    return json.dumps({'message': 'CSP updated successfully !'})
+                else:
+                    return json.dumps({'error': str(data[0])})
+            elif _role == 'customer':
+                cursor.callproc('sp_update_customer', (_id, _email, _name, _hashed_password, _bank_account_number))
+                data = cursor.fetchall()
+                if len(data) is 0:
+                    conn.commit()
+                    return json.dumps({'message': 'Customer updated successfully !'})
+                else:
+                    return json.dumps({'error': str(data[0])})
+            elif _role == 'ca':
+                cursor.callproc('sp_update_ca', (_id, _email, _name, _hashed_password, _bank_account_number))
+                data = cursor.fetchall()
+                if len(data) is 0:
+                    conn.commit()
+                    return json.dumps({'message': 'CA updated successfully !'})
+                else:
+                    return json.dumps({'error': str(data[0])})
+            else:
+                return json.dumps({'html': '<span>Enter the required fields</span>'})
+
+    except Exception as e:
+        return json.dumps({'error': str(e)})
 
 if __name__ == '__main__':
     app.run(debug=True)
