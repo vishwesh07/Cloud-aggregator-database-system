@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
     <link href="../static/css/signup.css" rel="stylesheet">
     <script src="../static/js/jquery-3.3.1.js"></script>
-    <script src="../static/js/login.js"></script>
+    <script src="../static/js/profile.js"></script>
 </head>
 <body>
 <div class="container" style="font-size:small">
@@ -31,40 +31,35 @@
                 <div class="col-md-12">
                     <form>
                         <div class="form-group row">
-                            <label for="name" class="col-4 col-form-label">Name*</label>
+                            <label for="inputName" class="col-4 col-form-label">Name*</label>
                             <div class="col-8">
-                                <input id="username" name="username" placeholder="name" class="form-control here" required="required" type="text">
+                                <input id="inputName" name="inputName" placeholder="name" class="form-control here" required="required" type="text">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="email" class="col-4 col-form-label">Email*</label>
+                            <label for="inputEmail" class="col-4 col-form-label">Email*</label>
                             <div class="col-8">
-                                <input id="email" name="email" placeholder="Email" class="form-control here" required="required" type="text">
+                                <input id="inputEmail" name="inputEmail" placeholder="Email" class="form-control here" required="required" type="text">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="website" class="col-4 col-form-label">Join Date</label>
+                            <label for="inputBankAccount" class="col-4 col-form-label">Bank Account Number</label>
                             <div class="col-8">
-                                <input id="website" name="website" placeholder="website" class="form-control here" type="date">
+                                <input id="inputBankAccount" name="inputBankAccount" placeholder="Bank account number" class="form-control here" type="text">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="newpass" class="col-4 col-form-label">Bank Account Number</label>
+                            <label for="inputPassword" class="col-4 col-form-label">Password</label>
                             <div class="col-8">
-                                <input id="newpass" name="newpass" placeholder="Bank account number" class="form-control here" type="text">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="newpass" class="col-4 col-form-label">New Password</label>
-                            <div class="col-8">
-                                <input id="newpass" name="newpass" placeholder="New Password" class="form-control here" type="text">
+                                <input id="inputPassword" name="inputPassword" placeholder="Password" class="form-control here" type="password">
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="offset-4 col-8">
-                                <button name="submit" type="submit" class="btn btn-primary">Update My Profile</button>
+                                <button name="submit" type="button" id="updateProfile" class="btn btn-primary">Update My Profile</button>
                             </div>
                         </div>
+                        <div class="updateSuccess">User profile update successful!</div>
                     </form>
                 </div>
             </div>

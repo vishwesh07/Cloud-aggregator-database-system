@@ -630,9 +630,3 @@ begin
         select 'Not enough resources available!!';
     end if;
 end$$ delimiter ;
-
-select month(o.order_date) as order_month, day(o.order_date) as order_day, o.order_amount as order_amount
-from order_ as o join customer as c on o.customer_id = c.customer_id and o.customer_id = 11243 and o.ca_id = 123 and o.order_end_date is null;
-
-select month(o.order_date) as order_month, day(o.order_date) as order_day, r.csp_cost as order_cost
-from order_ as o join receives as r on o.order_id = r.order_id and r.csp_id = 1235 and o.ca_id = 123 and o.order_end_date is null;
