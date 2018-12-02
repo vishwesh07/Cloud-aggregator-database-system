@@ -268,7 +268,8 @@ def generate_bill():
         cursor = conn.cursor()
         messages = []
         if _id and _role == "ca":
-            for ca_id, customer_id in sql_select('select * from onboards join order_ on order_.customer_id = onboards.customer_id and order_.ca_id = onboards.ca_id where onboards.ca_id="' + _id + '";'):
+            print(_id, _role)
+            for ca_id, customer_id in sql_select('select order_.ca_id, order_.customer_id from onboards join order_ on order_.customer_id = onboards.customer_id and order_.ca_id = onboards.ca_id where order_.ca_id="' + _id + '";'):
                 print("Generating bill for customer_id:", customer_id)
                 cursor.callproc('sp_generate_bill_ca', (datetime.now().month, datetime.now().year, ca_id, customer_id))
                 message = cursor.fetchall()

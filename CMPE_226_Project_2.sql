@@ -1,4 +1,4 @@
-drop database multicloud;
+drop database if exists multicloud;
 create database multicloud;
 use multicloud;
 
@@ -71,6 +71,7 @@ create table offer
   offer_name varchar(255) not null,
   discount int not null,
   ca_id int not null,
+  valid_till date,
   is_used bool default False,
   primary key(offer_id)
 );
@@ -298,11 +299,11 @@ insert into onboards values (4324323,11241);
 
 
 ##### Offer
-insert into offer values (4321,'Big Bang Offer',9,12121, False);
-insert into offer values (4322,'Bumpper Offer',11,232323, False);
-insert into offer values (4323,'Super Deal Offer',5,232323, False);
-insert into offer values (4324,'Platinum Offer',20,4324323, False);
-insert into offer values (4325,'Gold Bang Offer',15,4324323, False);
+insert into offer values (4321,'Big Bang Offer',9,12121, null, False);
+insert into offer values (4322,'Bumpper Offer',11,232323, null, False);
+insert into offer values (4323,'Super Deal Offer',5,232323, null, False);
+insert into offer values (4324,'Platinum Offer',20,4324323, null, False);
+insert into offer values (4325,'Gold Bang Offer',15,4324323, null, False);
 
 ##### Bill
 insert into bill values (0001,5000,1234,12121,11224,'01','2000', False);
@@ -365,7 +366,7 @@ begin
 			select 'Customer exists !!';
 
 		else
-        
+
 			insert into customer (customer_email_id, customer_name, customer_password, customer_join_date, customer_bank_account, customer_offer_id) values (sp_email_id, sp_name, sp_password, CURDATE(), sp_bank_account_number, null);
 			#select customer_id into temp_custId from customer where customer_email_id=sp_email_id;
 			insert into onboards (ca_id, customer_id) values (sp_ca_id, (select customer_id from customer where customer_email_id=sp_email_id));
@@ -397,8 +398,8 @@ begin
 	else
 
 		insert into csp ( csp_email_id, csp_name, csp_password, csp_join_date, csp_bank_account_number) values (c_email_id, c_name, c_password, CURDATE(), c_bank_account_number);
-		insert into csp_contracts (ca_id, csp_id) values (c_ca_id, (select csp_id from csp where csp_email_id=c_email_id)); 
-        
+		insert into csp_contracts (ca_id, csp_id) values (c_ca_id, (select csp_id from csp where csp_email_id=c_email_id));
+
 end if;
 end$$
 delimiter ;
@@ -440,21 +441,21 @@ begin
         resignal;
 	end;
 	start transaction;
-	 
-		select count(m.mac_id), sum(m.price) into temp_count, temp_price from csp_contracts c join machine m on c.csp_id=m.csp_id where c.ca_id=sp_ca_id and m.cpu_cores=sp_cpu and m.ram=sp_ram and m.disk_size=sp_disk_size and m.order_id is null order by m.price limit sp_no_of_machines;
-		
-		if ( temp_count > sp_no_of_machines ) then
+
+		select count(s.mac_id), sum(s.price) into temp_count, temp_price  from (select m.* from csp_contracts c join machine m on c.csp_id=m.csp_id where c.ca_id=sp_ca_id and m.cpu_cores=sp_cpu and m.ram=sp_ram and m.disk_size=sp_disk_size and m.order_id is null order by m.price limit sp_no_of_machines) as s;
+
+		if ( temp_count = sp_no_of_machines ) then
 
 		insert into order_ (order_date, number_of_machines, ca_id, customer_id, cpu_cores, ram, disk_size, order_end_date, order_amount, order_cost) values (CURDATE(), sp_no_of_machines,sp_ca_id,sp_customer_id, sp_cpu, sp_ram, sp_disk_size, null, temp_price*1.2, temp_price);
 		#select m.mac_id, m.csp_id, m.price from csp_contracts c join machine m on c.csp_id=m.csp_id where c.ca_id=sp_ca_id and m.cpu_cores=sp_cpu and m.ram=sp_ram and m.disk_size=sp_disk_size order by m.price limit 1;
 
 		set temp_last_order_id = LAST_INSERT_ID();
-		
+
         update  machine m1 join (select m.mac_id from csp_contracts c join machine m on c.csp_id=m.csp_id where c.ca_id=sp_ca_id and m.cpu_cores=sp_cpu and m.ram=sp_ram and m.disk_size=sp_disk_size and m.order_id is null order by m.price limit sp_no_of_machines) s
 		on m1.mac_id=s.mac_id set m1.order_id=temp_last_order_id;
 
 		insert into receives (csp_id, order_id, csp_cost, quantity) select m.csp_id, m.order_id, sum(m.price), count(m.mac_id) from machine m where m.order_id=temp_last_order_id group by m.csp_id;
-        
+
 		else
 		select 'Not enough resources available!!';
 		end if;
@@ -478,7 +479,7 @@ declare order_cost int;
 declare total_monthly_bill int;
 declare finished int default 0;
 declare ca_order_cursor cursor for select month(o.order_date) as order_month, day(o.order_date) as order_day, r.csp_cost as order_cost
-from order_ as o join receives as r on o.order_id = r.order_id and r.csp_id = sp_csp_id and o.ca_id = sp_ca_id and o.order_end_date = null;
+from order_ as o join receives as r on o.order_id = r.order_id and r.csp_id = sp_csp_id and o.ca_id = sp_ca_id and o.order_end_date is null;
 declare continue handler for not found set finished = 1;
 set total_monthly_bill = 0;
 
@@ -493,7 +494,7 @@ get_ca_order: LOOP
  IF order_month < sp_month THEN
   set total_monthly_bill = total_monthly_bill + (30 * order_cost);
  ELSEIF order_month = sp_month THEN
-  set total_monthly_bill = total_monthly_bill + ( (30 - order_day + 1) * order_cost);
+  set total_monthly_bill = total_monthly_bill + (order_day * order_cost);
  END IF;
 END LOOP get_ca_order;
 
@@ -525,9 +526,9 @@ declare offer_discount int default 0;
 declare offer_id int default null;
 declare finished int default 0;
 declare customer_order_cursor cursor for select month(o.order_date) as order_month, day(o.order_date) as order_day, o.order_amount as order_amount
-from order_ as o join customer as c on o.customer_id = c.customer_id and o.customer_id = sp_customer_id and o.ca_id = sp_ca_id and o.order_end_date = null;
+from order_ as o join customer as c on o.customer_id = c.customer_id and o.customer_id = sp_customer_id and o.ca_id = sp_ca_id and o.order_end_date is null;
 declare customer_offer_cursor cursor for select o.offer_id, o.discount
-from offer as o join customer as c on o.offer_id = c.offer_id and o.ca_id = sp_ca_id and o.is_used is False and (sp_month < month(o.valid_till) or (month(o.valid_till) = sp_month and 30 <= day(o.valid_till))) and year(o.valid_till) <= sp_year;
+from offer as o join customer as c on o.offer_id = c.customer_offer_id and o.ca_id = sp_ca_id and o.is_used is False and (sp_month < month(o.valid_till) or (month(o.valid_till) = sp_month and 30 <= day(o.valid_till))) and year(o.valid_till) <= sp_year;
 declare continue handler for not found set finished = 1;
 set total_monthly_bill = 0;
 
@@ -542,13 +543,13 @@ get_customer_order: LOOP
  IF order_month < sp_month THEN
   set total_monthly_bill = total_monthly_bill + (30 * order_amount);
  ELSEIF order_month = sp_month THEN
-  set total_monthly_bill = total_monthly_bill + ( (30 - order_day + 1) * order_amount);
+  set total_monthly_bill = total_monthly_bill + (order_day * order_amount);
  END IF;
 END LOOP get_customer_order;
 
 close customer_order_cursor;
 
-open customer_order_cursor;
+open customer_offer_cursor;
 
 get_customer_offer: LOOP
  FETCH customer_offer_cursor INTO id, discount;
@@ -576,56 +577,56 @@ select concat("New bill with cost: ", total_monthly_bill, " with discount: ", of
 end$$
 delimiter ;
 
-###### Stored Procedure to update CA delimiter 
+###### Stored Procedure to update CA delimiter
 delimiter $$
 use multicloud $$
 create definer=`root`@`localhost` procedure `sp_update_ca`(
-    in sp_id int, 		
-    in sp_email_id varchar(255) , 		
-    in sp_name varchar(255) , 		
-    in sp_password varchar(255), 		
+    in sp_id int,
+    in sp_email_id varchar(255) ,
+    in sp_name varchar(255) ,
+    in sp_password varchar(255),
     in sp_bank_account_number int
-) 	
-begin 	
-    if (select exists (select 1 from ca where ca_id = sp_id)) then 		 
+)
+begin
+    if (select exists (select 1 from ca where ca_id = sp_id)) then
 		update ca set ca_name = sp_name, ca_email_id = sp_email_id, ca_password = sp_password, ca_bank_account_number = sp_bank_account_number where ca_id=sp_id;
     else
         select 'Not enough resources available!!';
     end if;
-end$$ 
+end$$
 delimiter ;
 
-###### Stored Procedure to update CSP delimiter $$ 
+###### Stored Procedure to update CSP delimiter $$
 delimiter $$
 use multicloud $$
-create definer=`root`@`localhost` procedure `sp_update_csp`( 		 
-    in sp_id int, 		
-    in sp_email_id varchar(255) , 		
-    in sp_name varchar(255) , 		
-    in sp_password varchar(255), 		
-    in sp_bank_account_number int 	
-) 	
-begin 	
-    if (select exists (select 1 from csp where csp_id = sp_id)) then 		 
-        update csp set csp_name = sp_name, csp_email_id = sp_email_id, csp_password = sp_password, csp_bank_account_number = sp_bank_account_number where csp_id = sp_id; 	
-    else 		
-        select 'Not enough resources available!!'; 	
-    end if; 	
-end$$ delimiter ; 
+create definer=`root`@`localhost` procedure `sp_update_csp`(
+    in sp_id int,
+    in sp_email_id varchar(255) ,
+    in sp_name varchar(255) ,
+    in sp_password varchar(255),
+    in sp_bank_account_number int
+)
+begin
+    if (select exists (select 1 from csp where csp_id = sp_id)) then
+        update csp set csp_name = sp_name, csp_email_id = sp_email_id, csp_password = sp_password, csp_bank_account_number = sp_bank_account_number where csp_id = sp_id;
+    else
+        select 'Not enough resources available!!';
+    end if;
+end$$ delimiter ;
 
-###### Stored Procedure to update customer delimiter $$ 
+###### Stored Procedure to update customer delimiter $$
 delimiter $$
 use multicloud $$
-create definer=`root`@`localhost` procedure `sp_update_customer`( 		 
-    in sp_id int, 		
-    in sp_email_id varchar(255) , 		
-    in sp_name varchar(255) , 		
-    in sp_password varchar(255), 		
-    in sp_bank_account_number int 	) 	
-begin 	
-    if (select exists (select 1 from customer where customer_id = sp_id)) then 		 
-        update customer set customer_name = sp_name, customer_email_id = sp_email_id, customer_password = sp_password, customer_bank_account = sp_bank_account_number where customer_id = sp_id; 	
-	else 		
-        select 'Not enough resources available!!'; 	
-    end if; 	
-end$$ delimiter ; 
+create definer=`root`@`localhost` procedure `sp_update_customer`(
+    in sp_id int,
+    in sp_email_id varchar(255) ,
+    in sp_name varchar(255) ,
+    in sp_password varchar(255),
+    in sp_bank_account_number int 	)
+begin
+    if (select exists (select 1 from customer where customer_id = sp_id)) then
+        update customer set customer_name = sp_name, customer_email_id = sp_email_id, customer_password = sp_password, customer_bank_account = sp_bank_account_number where customer_id = sp_id;
+	else
+        select 'Not enough resources available!!';
+    end if;
+end$$ delimiter ;
