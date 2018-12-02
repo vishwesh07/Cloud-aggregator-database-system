@@ -1,19 +1,31 @@
 $(function() {
     $('document').ready(function() {
+        $(".ticketSuccess").hide();
         $.ajax({
-            url: '/orderHistory?customer_id='+sessionStorage.getItem("id"),
+            url: '/getTickets?inputId='+sessionStorage.getItem("id")+'&inputRole='+sessionStorage.getItem("role"),
             type: 'GET',
             success: function(response) {
-                var orderList = JSON.parse(response).results;
                 var $ul = $('.orderHistory').append(
-                  orderList.map(order =>
-                    $("<tr>").append($("<td>").text(order[0]))
-                        .append($("<td>").text(order[1])).append($("<td>").text(order[2]))
-                        .append($("<td>").text(order[5])).append($("<td>").text(order[6]))
-                        .append($("<td>").text(order[7])).append($("<td>").text(order[8]))
-                        .append($("<td>").text(order[9]))
+                  response.result.map(order =>
+                    $("<tr>").append($("<td>").text(order._id))
+                        .append($("<td>").text(order.problem_title)).append($("<td>").text(order.problem_description))
+                        .append($("<td>").text(order.date)).append($("<td>").text(order.resolved))
                   )
                 );
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
+     $('.help').click(function() {
+        $.ajax({
+            url: '/help?inputRole='+sessionStorage.getItem("role")+'&inputId='+sessionStorage.getItem("id"),
+            data: $('form').serialize(),
+            type: 'POST',
+            success: function(response) {
+                $(".ticketSuccess").show();
+                console.log(response);
             },
             error: function(error) {
                 console.log(error);

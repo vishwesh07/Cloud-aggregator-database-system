@@ -5,6 +5,7 @@ from pymongo import MongoClient
 from werkzeug import generate_password_hash, check_password_hash
 from crud import sql_select, sql_delete, sql_update, sql_insert
 from datetime import datetime
+from bson.objectid import ObjectId
 
 app = Flask(__name__)
 mysql = MySQL()
@@ -138,8 +139,7 @@ def myCustomers():
     try:
         _ca_id = request.args['inputCaId']
         if _ca_id:
-            print('select distinct * from customer c join onboards o on c.customer_id=o.customer_id')
-            return json.dumps({'results': sql_select('select * from customer c join onboards o on c.customer_id=o.customer_id where o.ca_id='+_ca_id)})
+            return json.dumps({'results': sql_select('select * from customer c join onboards o on c.customer_id=o.customer_id where c.customer_isDelete=0 and o.ca_id='+_ca_id)})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
     except Exception as e:
@@ -497,17 +497,17 @@ def updateCustomerProfile():
 @app.route('/help', methods=['POST'])
 def help():
     try:
-        email = request.args['email']
-        role = request.args['role']
-        problem_title = request.form['problemTitle']
-        problem_description = request.form['problemDescription']
-        if email and role and problem_title and problem_description:
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
+        _problem_title = request.form['inputProblemTitle']
+        _problem_description = request.form['inputProblemDescription']
+        if _id and _role and _problem_title and _problem_description:
             record = {
-                "email": email,
-                "role": role,
-                "problem_title": problem_title,
-                "problem_description": problem_description,
-                "date": datetime.datetime.utcnow(),
+                "id": _id,
+                "role": _role,
+                "problem_title": _problem_title,
+                "problem_description": _problem_description,
+                "date": datetime.utcnow(),
                 "resolved": "no"
             }
             tickets = mongodb.tickets
@@ -524,11 +524,11 @@ def help():
 def get_tickets():
     try:
         tickets_array = []
-        email = request.args['email']
-        role = request.args['role']
-        if email and role:
+        id = request.args['inputId']
+        role = request.args['inputRole']
+        if id and role != "ca":
             tickets = mongodb.tickets
-            user_tickets = tickets.find({"email":email, "role": role})
+            user_tickets = tickets.find({"id":id, "role": role})
             for ticket in user_tickets:
                 # print(dict(ticket))
                 temp = dict()
@@ -539,6 +539,30 @@ def get_tickets():
                         temp[key] = str(ticket[key])
                 tickets_array.append(temp)
             return jsonify({"result":tickets_array})
+        elif role == "ca":
+            tickets = mongodb.tickets
+            user_tickets = tickets.find()
+            for ticket in user_tickets:
+                temp = dict()
+                for key in ticket:
+                    if key != '_id':
+                        temp[key] = ticket[key]
+                    else:
+                        temp[key] = str(ticket[key])
+                tickets_array.append(temp)
+            return jsonify({"result":tickets_array})
+        else:
+            return json.dumps({'error': 'Enter required fields'}), 500
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/resolveIssue', methods=['GET'])
+def resolveIssue():
+    try:
+        _id = request.args['inputIssueId']
+        if _id:
+            mongodb.tickets.update({'_id': ObjectId(_id)}, {'$set': {"resolved": "yes"}}, upsert=False)
+            return json.dumps({'msg': 'Issue resolved'})
         else:
             return json.dumps({'error': 'Enter required fields'}), 500
     except Exception as e:
