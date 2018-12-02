@@ -11,7 +11,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="../static/css/signup.css" rel="stylesheet">
     <script src="../static/js/jquery-3.3.1.js"></script>
-    <script src="../static/js/login.js"></script>
+    <script src="../static/js/adminOffer.js"></script>
   </head>
   <body>
     <div class="container" style="font-size:small">
@@ -42,49 +42,15 @@
         <thead class = "table-dark">
 
             <tr>
-                <th>Customer_Id</th>
-                <th>Name</th>
                 <th>Offer_Id</th>
                 <th>Offer Name</th>
                 <th>Discount</th>
-                 <th>Add Offer</th>
+                 <th>Delete Offer</th>
             </tr>
-
         </thead>
-
-
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>John</td>
-               <td>18</td>
-                <td>123456789</td>
-                <td>12</td>
-                <td> <button type="button" class="btn-sm btn-primary" data-toggle="modal" data-target="#myModal">Add Offer</button></td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Peter</td>
-                <td>18</td>
-                <td>123456789</td>
-                  <td>12</td>
-                <td> <button type="button" class="btn-sm btn-primary" data-toggle="modal" data-target="#myModalApply">Apply Offer</button></td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>John</td>
-                <td>18</td>
-                <td>123456789</td>
-                <td>10</td>
-                  <td> <button type="button" class="btn-sm btn-primary" data-toggle="modal" data-target="#myModal">Add Offer</button></td>
-
-
+        <tbody class="currentOrders">
         </tbody>
 		</table>
-
-
-
-
         <!-- Modal for add offer -->
         <div class="modal fade" id="myModal" role="dialog">
             <div class="modal-dialog">

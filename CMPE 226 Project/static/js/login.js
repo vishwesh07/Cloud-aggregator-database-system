@@ -9,6 +9,7 @@ $(function() {
 
     $('#btnLogin').click(function() {
         sessionStorage.setItem("email_id", dropdownval);
+        sessionStorage.setItem("passwordOriginal", $('#inputPasswordLogin').val());
         $.ajax({
             url: '/login?inputRole='+dropdownval,
             data: $('form').serialize(),
@@ -21,7 +22,11 @@ $(function() {
                 sessionStorage.setItem("password", JSON.parse(response).results[0][3]);
                 sessionStorage.setItem("bankAccount", JSON.parse(response).results[0][4]);
                 sessionStorage.setItem("role", dropdownval);
-                window.location.replace("http://localhost:5000/showCustomerAccountDisplay");
+                if(dropdownval=="ca"){
+                    window.location.replace("http://localhost:5000/showAdmin");
+                } else {
+                    window.location.replace("http://localhost:5000/showCustomerAccountDisplay");
+                }
             },
             error: function(error) {
                 $(".errorText").text(JSON.parse(error.responseText).error);

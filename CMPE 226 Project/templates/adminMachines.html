@@ -11,7 +11,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="../static/css/signup.css" rel="stylesheet">
     <script src="../static/js/jquery-3.3.1.js"></script>
-    <script src="../static/js/login.js"></script>
+    <script src="../static/js/adminMachines.js"></script>
   </head>
   <body>
     <div class="container" style="font-size:small">
@@ -43,50 +43,19 @@
 
             <tr>
                 <th>Machine_Id</th>
-                <th>IP_address</th>
+                 <th>Owned By(CSP)</th>
+                <th>Disk Size</th>
                 <th>RAM</th>
                 <th>CPU_Cores</th>
-                <th>Disk Size</th>
-                 <th>No_Of_Machines</th>
-                 <th>Owned By</th>
+                <th>IP_address</th>
+                 <th>Order Id</th>
                  <th>Rented To</th>
             </tr>
 
         </thead>
 
 
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>John</td>
-                <td>8</td>
-               <td>18</td>
-                <td>123456789</td>
-                <td>12</td>
-                <td>AWS</td>
-                   <td>1214</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Peter</td>
-                <td>16</td>
-                <td>18</td>
-                <td>123456789</td>
-                  <td>12</td>
-              <td>AWS</td>
-                    <td>1215</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>John</td>
-                <td>12</td>
-                <td>18</td>
-                <td>123456789</td>
-                  <td>20</td>
-                <td>AWS</td>
-                 <td>1216</td>
-            </tr>
-
+        <tbody class="currentOrders">
         </tbody>
 		</table>
 

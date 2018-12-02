@@ -151,7 +151,9 @@ def myCSPs():
     try:
         _ca_id = request.args['inputCaId']
         if _ca_id:
-            return json.dumps({'results': sql_select('select * from csp c join csp_contracts o on c.csp_id=o.csp_id')})
+            return json.dumps({'resultsAvailable': sql_select('select * from csp c join csp_contracts o on c.csp_id=o.csp_id where o.ca_id='+_ca_id+' and c.csp_id not in (select m.csp_id from machine m where m.order_id is not null)'),
+                               'resultsOccupied': sql_select(
+                                   'select * from csp c join csp_contracts o on c.csp_id=o.csp_id where o.ca_id=' + _ca_id + ' and c.csp_id in (select m.csp_id from machine m where m.order_id is not null)')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
     except Exception as e:
@@ -162,7 +164,8 @@ def myCustomers():
     try:
         _ca_id = request.args['inputCaId']
         if _ca_id:
-            return json.dumps({'results': sql_select('select * from customer c join onboards o on c.customer_id=o.customer_id')})
+            print('select distinct * from customer c join onboards o on c.customer_id=o.customer_id')
+            return json.dumps({'results': sql_select('select * from customer c join onboards o on c.customer_id=o.customer_id where o.ca_id='+_ca_id)})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
     except Exception as e:
@@ -175,13 +178,11 @@ def currentOrders():
         _role = request.args['inputRole']
         _ca_id = request.args['inputCaId']
         if _id and _ca_id and _role == "customer":
-            print('select * from order_customer where customer_id="'+_id+'" and ca_id="'+ _ca_id +'" and order_end_date is null')
             return json.dumps({'results': sql_select('select * from order_customer where customer_id="'+_id+'" and ca_id="'+ _ca_id +'" and order_end_date is null')})
         elif _id and _ca_id and _role == "csp":
             return json.dumps({'results': sql_select('select * from order_csp where csp_id="' + _id + '" and ca_id="' + _ca_id + '" and order_end_date is null')})
         elif _id and _ca_id and _role == "ca":
-            print('select * from order_ where ca_id="' + _ca_id + '" and order_end_date is null')
-            return json.dumps({'results': sql_select('select * from order_ where ca_id="' + _ca_id + '" and order_end_date is null')})
+            return json.dumps({'results': sql_select('select * from order_ o join receives r on o.order_id=r.order_id where o.ca_id="' + _ca_id + '" and o.order_end_date is null')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
     except Exception as e:
@@ -198,7 +199,8 @@ def orderHistory():
         elif _id and _ca_id and _role == "csp":
             return json.dumps({'results': sql_select('select * from order_csp where csp_id="' + _id + '" and ca_id="' + _ca_id + '" and order_end_date is not null')})
         elif _id and _ca_id and _role == "ca":
-            return json.dumps({'results': sql_select('select * from order_ where ca_id="' + _ca_id + '" and order_end_date is not null')})
+            print('select * from order_ o join receives r on o.order_id=r.order_id where o.ca_id="' + _ca_id + '" and o.order_end_date is not null')
+            return json.dumps({'results': sql_select('select * from order_ o join receives r on o.order_id=r.order_id where o.ca_id="' + _ca_id + '" and o.order_end_date is not null')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
     except Exception as e:
@@ -215,7 +217,8 @@ def getMachines():
         elif _id and _ca_id and _role == "csp":
             return json.dumps({'results': sql_select('select m.* from order_csp r join machine m on r.order_id=m.order_id where r.csp_id="' + _id + '" and r.ca_id="' + _ca_id + '" and order_end_date is null')})
         elif _id and _ca_id and _role == "ca":
-            return json.dumps({'results': sql_select('select m.* from order_  ord join machine m on ord.order_id=m.order_id where ord.ca_id="' + _ca_id + '" and order_end_date is null')})
+            print('select * from order_ ord join machine m on ord.order_id=m.order_id where ord.ca_id="' + _ca_id + '" and order_end_date is null')
+            return json.dumps({'results': sql_select('select m.*, ord.customer_id from order_ ord join machine m on ord.order_id=m.order_id where ord.ca_id="' + _ca_id + '" and order_end_date is null')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
     except Exception as e:
@@ -449,8 +452,6 @@ def signUp():
 
 @app.route('/updateProfile', methods = ['POST'])
 def updateProfile():
-    print(request.args)
-    print(request.form)
     try:
         _id = request.args['inputId']
         _role = request.args['inputRole']
@@ -467,7 +468,7 @@ def updateProfile():
                 data = cursor.fetchall()
                 if len(data) is 0:
                     conn.commit()
-                    return json.dumps({'message': 'CSP updated successfully !'})
+                    return json.dumps({'results': { "_name" : _name, "_password" : _password, "_bank_account_number": _bank_account_number, "_hashed_password": _hashed_password}})
                 else:
                     return json.dumps({'error': str(data[0])})
             elif _role == 'customer':
@@ -475,7 +476,7 @@ def updateProfile():
                 data = cursor.fetchall()
                 if len(data) is 0:
                     conn.commit()
-                    return json.dumps({'message': 'Customer updated successfully !'})
+                    return json.dumps({'results': { "_name" : _name, "_password" : _password, "_bank_account_number": _bank_account_number, "_hashed_password": _hashed_password}})
                 else:
                     return json.dumps({'error': str(data[0])})
             elif _role == 'ca':
@@ -483,7 +484,7 @@ def updateProfile():
                 data = cursor.fetchall()
                 if len(data) is 0:
                     conn.commit()
-                    return json.dumps({'message': 'CA updated successfully !'})
+                    return json.dumps({'results': { "_name" : _name, "_password" : _password, "_bank_account_number": _bank_account_number, "_hashed_password": _hashed_password}})
                 else:
                     return json.dumps({'error': str(data[0])})
             else:
@@ -538,6 +539,42 @@ def get_tickets():
             return jsonify({"result":tickets_array})
         else:
             return json.dumps({'error': 'Enter required fields'}), 500
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/createOffer', methods = ['POST'])
+def createOffer():
+    try:
+        _id = request.args['inputId']
+        _name = request.form['inputName']
+        _discount = request.form['inputDiscount']
+        sql_insert('insert into offer (offer_name, discount, ca_id, is_used ) values ( "'+ _name +'", ' + _discount + ', '+_id+',0);')
+        return json.dumps({'message': 'Offer created successfully !'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/assignOffer', methods = ['GET'])
+def assignOffer():
+    try:
+        _offer_id = request.args['inputOfferId']
+        _customer_id = request.args['inputCustomerId']
+        sql_update('update customer set customer_offer_id = '+ _offer_id +' where customer_id= ' + _customer_id + ';')
+        return json.dumps({'message': 'Offer assigned successfully !'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/getOffer', methods = ['GET'])
+def getOffer():
+    try:
+        _ca_id = request.args['inputCaId']
+        _customer_id = request.args['inputId']
+        _role = request.args['inputRole']
+        if _ca_id and _role:
+            if _role == 'ca':
+                return json.dumps({'results': sql_select('select * from offer where ca_id = '+ _ca_id +';')})
+            if _role == 'customer':
+                print('select * from customer c join offer o on c.customer_offer_id=o.offer_id where  c.customer_id = '+ _customer_id +';')
+                return json.dumps({'results': sql_select('select * from customer c join offer o on c.customer_offer_id=o.offer_id where  c.customer_id = '+ _customer_id +';')})
     except Exception as e:
         return json.dumps({'error': str(e)})
 
