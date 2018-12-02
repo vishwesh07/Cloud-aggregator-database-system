@@ -5,6 +5,11 @@ $(function() {
             type: 'GET',
             success: function(response) {
                 var orderList = JSON.parse(response).results;
+                var totalCost =0;
+                $.each( orderList, function( index, value ){
+                    totalCost= totalCost + value[9]-value[10];
+                });
+                $(".totalVal").text(totalCost);
                 var $ul = $('.currentOrders').append(
                   orderList.map(order =>
                     $("<tr>").append($("<td>").text(order[0]))

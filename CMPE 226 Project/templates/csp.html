@@ -11,7 +11,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="../static/css/signup.css" rel="stylesheet">
     <script src="../static/js/jquery-3.3.1.js"></script>
-    <script src="../static/js/login.js"></script>
+    <script src="../static/js/csp.js"></script>
   </head>
   <body>
     <div class="container" style="font-size:small">
@@ -35,63 +35,23 @@
 
         <center><b><h3>Current Orders</h3></b></center>
           <table class="table table-bordered">
-
-        <thead class = "table-dark">
-
+            <thead class = "table-dark">
             <tr>
                 <th>Order_Id</th>
-                <th>Machine_Id</th>
                 <th>Order Start Date</th>
-                <th>RAM</th>
+                <th>Number of Machines</th>
                 <th>CPU_Cores</th>
+                <th>RAM</th>
                 <th>Disk Size</th>
-                 <th>No_Of_Machines</th>
-                 <th>Price</th>
+                <th>Price</th>
             </tr>
-
-        </thead>
-
-
-        <tbody>
-            <tr>
-                <td>4</td>
-                <td>4</td>
-                <td>8</td>
-                <td>18</td>
-                <td>64</td>
-                <td>20</td>
-                <td>120</td>
-                <td>120</td>
-
-            </tr>
-            <tr>
-                 <td>4</td>
-                  <td>4</td>
-                <td>8</td>
-                <td>18</td>
-                <td>64</td>
-                <td>20</td>
-                <td>120</td>
-                <td>120</td>
-
-            </tr>
-            <tr>
-              <td>4</td>
-                  <td>4</td>
-                <td>8</td>
-                <td>18</td>
-                <td>64</td>
-                <td>20</td>
-                <td>120</td>
-                <td>120</td>
-
-            </tr>
-
-        </tbody>
-		</table>
+            </thead>
+            <tbody class="currentOrders">
+            </tbody>
+        </table>
 
         <div class="panel panel-danger">
-                <div class="panel-heading" ><h4>Total Revenue Generated : 654</h4></div>
+                <div class="panel-heading" ><h4>Total Revenue Generated : <span class="totalVal"></span></h4></div>
 
     </div>
 

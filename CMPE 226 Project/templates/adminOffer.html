@@ -51,55 +51,7 @@
         <tbody class="currentOrders">
         </tbody>
 		</table>
-        <!-- Modal for add offer -->
-        <div class="modal fade" id="myModal" role="dialog">
-            <div class="modal-dialog">
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" style="padding-top: 10px"><b>Add New Offer</b></h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <form style="padding: 20px;" class="placeOrderForm">
-                        <div class="form-group row">
-                            <label for="id" class="col-4 col-form-label">Customer_Id*</label>
-                            <div class="col-8">
-                                <input id="id" value="" name="Customer_Id" placeholder="Enter Customer_Id" class="form-control here" type="number">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="Email" class="col-4 col-form-label">Email*</label>
-                            <div class="col-8">
-                                <input id="Email" name="Email" value="" placeholder="Enter Email" class="form-control here" type="Email">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="offer" class="col-4 col-form-label">Offer_Id*</label>
-                            <div class="col-8">
-                                <input id="offer" name="offer" value="" placeholder="Enter offer id" class="form-control here" type="number">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="discount" class="col-4 col-form-label">Discount</label>
-                            <div class="col-8">
-                                <input id="discount" name="discount" value="" placeholder="Enter discount %" class="form-control here" type="number">
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="offset-4 col-8">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                <button name="submit" type="submit" class="btn btn-primary btn-sm placeOrder" data-dismiss="modal">Add</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-
-
-
+          <button type="button" class="btn btn-primary btn-sm btn-block" data-toggle="modal" data-target="#myModalApply">New Offer</button>
 
         <!-- Modal for apply offer -->
           <div class="modal fade" id="myModalApply" role="dialog">
@@ -107,39 +59,27 @@
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" style="padding-top: 10px"><b>Apply Offer</b></h4>
+                        <h4 class="modal-title" style="padding-top: 10px"><b>New Offer</b></h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
-                    <form style="padding: 20px;" class="placeOrderForm">
+                    <form style="padding: 20px;" class="newOfferForm">
                         <div class="form-group row">
-                            <label for="id" class="col-4 col-form-label">Customer_Id*</label>
+                            <label for="inputName" class="col-4 col-form-label">Offer_Name*</label>
                             <div class="col-8">
-                                <input id="id" value="" name="Customer_Id" placeholder="Enter Customer_Id" class="form-control here" type="number">
+                                <input id="inputName" name="inputName" value="" placeholder="Enter offer name" class="form-control here" type="text">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="Email" class="col-4 col-form-label">Email*</label>
+                            <label for="inputDiscount" class="col-4 col-form-label">Discount</label>
                             <div class="col-8">
-                                <input id="Email" name="Email" value="" placeholder="Enter Email" class="form-control here" type="Email">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="offer" class="col-4 col-form-label">Offer_Id*</label>
-                            <div class="col-8">
-                                <input id="offer" name="offer" value="" placeholder="Enter offer id" class="form-control here" type="number">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="discount" class="col-4 col-form-label">Discount</label>
-                            <div class="col-8">
-                                <input id="discount" name="discount" value="" placeholder="Enter discount %" class="form-control here" type="number">
+                                <input id="inputDiscount" name="inputDiscount" value="" placeholder="Enter discount %" class="form-control here" type="number">
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <div class="offset-4 col-8">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                <button name="submit" type="submit" class="btn btn-primary btn-sm placeOrder" data-dismiss="modal">Apply</button>
+                                <button name="newOffer" type="button" class="btn btn-primary btn-sm newOffer" data-dismiss="modal">Apply</button>
                             </div>
                         </div>
                     </form>
