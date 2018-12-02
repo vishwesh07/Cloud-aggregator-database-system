@@ -11,7 +11,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="../static/css/signup.css" rel="stylesheet">
     <script src="../static/js/jquery-3.3.1.js"></script>
-    <script src="../static/js/login.js"></script>
+    <script src="../static/js/adminCSP.js"></script>
   </head>
   <body>
     <div class="container" style="font-size:small">
@@ -40,80 +40,20 @@
           <table class="table table-bordered">
 
         <thead class = "table-dark">
-
             <tr>
                 <th>CSP_ID</th>
                  <th>Name</th>
                 <th>Email_Id</th>
-                <th>Password</th>
+                <th>Join Date</th>
                 <th>Bank Account No.</th>
-                <th>Machine_Id</th>
-                <th>No. of Machines</th>
-                 <th>IP_address</th>
-                <th>CPU_Cores</th>
-                 <th>Disk Size</th>
-                 <th>RAM</th>
-                <th>Price</th>
                 <th>Delete</th>
-
             </tr>
-
         </thead>
-
-
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>John</td>
-               <td>18</td>
-                <td>123456789</td>
-                <td>12</td>
-                <td>AWS</td>
-                <td>12</td>
-                <td>12</td>
-                <td>AWS</td>
-                <td>AWS</td>
-                <td>12</td>
-                <td>12</td>
-              <td><button type="button" class="btn-sm btn-danger">Delete</button></td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Peter</td>
-                <td>18</td>
-                <td>123456789</td>
-                <td>12</td>
-                <td>12</td>
-                <td>AWS</td>
-                <td>12</td>
-                <td>AWS</td>
-                 <td>AWS</td>
-                 <td>12</td>
-                 <td>12</td>
-                   <td><button type="button" class="btn-sm btn-danger">Delete</button></td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>John</td>
-                <td>18</td>
-                <td>123456789</td>
-                <td>20</td>
-                <td>12</td>
-                <td>AWS</td>
-                <td>12</td>
-                <td>AWS</td>
-                 <td>AWS</td>
-                <td>12</td>
-                <td>12</td>
-                <td><button type="button" class="btn-sm btn-danger">Delete</button></td>
-            </tr>
-
+        <tbody class="currentOrders">
         </tbody>
 		</table>
 
-
-
-        <button type="button" class="btn btn-primary btn-sm btn-block" data-toggle="modal" data-target="#myModal">Add New CSP</button>
+        <!--button type="button" class="btn btn-primary btn-sm btn-block" data-toggle="modal" data-target="#myModal">Add New CSP</button-->
         <!-- Modal -->
         <div class="modal fade" id="myModal" role="dialog">
             <div class="modal-dialog">

@@ -11,7 +11,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="../static/css/signup.css" rel="stylesheet">
     <script src="../static/js/jquery-3.3.1.js"></script>
-    <script src="../static/js/login.js"></script>
+    <script src="../static/js/adminOrder.js"></script>
   </head>
   <body>
     <div class="container" style="font-size:small">
@@ -35,62 +35,32 @@
 
       <div class="jumbotron">
         <h2> <b>Cloud Aggregator</b></h2>
-            <h3>Customer Orders</h3>
 
           <table class="table table-bordered">
 
         <thead class = "table-dark">
 
-            <tr>
+            <tr >
                 <th>Order_Id</th>
                 <th>Order Start Date</th>
-                <th>Order End Date</th>
-                <th>RAM</th>
+                <th>No_Of_Machines</th>
+                <th>Customer_Id</th>
                 <th>CPU_Cores</th>
+                <th>RAM</th>
                 <th>Disk Size</th>
-                 <th>No_Of_Machines</th>
-                <th>Amount</th>
-                 <th>Customer_Id</th>
+                <th>Order End Date</th>
+                <th>Order Total Amount</th>
+                <th>Order Total Cost</th>
+                <th>CSP</th>
+                <th>CSP Quantity</th>
+                <th>CSP Cost</th>
+                <th>Order Profit</th>
             </tr>
 
         </thead>
 
 
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>John</td>
-                <td>Carter</td>
-               <td>18</td>
-                <td>123456789</td>
-                <td>12</td>
-                <td>AWS</td>
-                <td>12</td>
-                <td>AWS</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Peter</td>
-                <td>Parker</td>
-                <td>18</td>
-                <td>123456789</td>
-                  <td>12</td>
-              <td>AWS</td>
-                <td>12</td>
-                <td>AWS</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>John</td>
-                <td>Rambo</td>
-                <td>18</td>
-                <td>123456789</td>
-                  <td>20</td>
-                <td>AWS</td>
-                <td>12</td>
-                <td>AWS</td>
-            </tr>
-
+        <tbody  class="currentOrders">
         </tbody>
 		</table>
 
@@ -101,83 +71,6 @@
                 <div class="panel-heading" ><h4></h4> </div>
 
     </div>
-
-
-
-            <h3>CSP Orders</h3>
-
-          <table class="table table-bordered">
-
-        <thead class = "table-dark">
-
-            <tr>
-
-                 <th>Order_Id</th>
-                <th>Order Start Date</th>
-                <th>Order End Date</th>
-                <th>RAM</th>
-                <th>CPU_Cores</th>
-                <th>Disk Size</th>
-                 <th>No_Of_Machines</th>
-                <th>CSP_Cost</th>
-                 <th>Owned By</th>
-
-
-            </tr>
-
-        </thead>
-
-
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>John</td>
-                <td>Carter</td>
-               <td>18</td>
-                <td>123456789</td>
-                <td>12</td>
-                <td>AWS</td>
-                  <td>12</td>
-                <td>AWS</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Peter</td>
-                <td>Parker</td>
-                <td>18</td>
-                <td>123456789</td>
-                  <td>12</td>
-              <td>AWS</td>
-                  <td>12</td>
-                <td>AWS</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>John</td>
-                <td>Rambo</td>
-                <td>18</td>
-                <td>123456789</td>
-                  <td>20</td>
-                <td>AWS</td>
-                  <td>12</td>
-                <td>AWS</td>
-            </tr>
-
-        </tbody>
-		</table>
-
-
-
-
-<div class="panel panel-danger">
-                <div class="panel-heading" ><h4></h4> </div>
-
-    </div>
-
-
-
-
-
 
       <footer class="footer">
         <p>&copy; CMPE 226</p>

@@ -442,7 +442,7 @@ begin
 	start transaction;
 	 
 		select count(m.mac_id), sum(m.price) into temp_count, temp_price from csp_contracts c join machine m on c.csp_id=m.csp_id where c.ca_id=sp_ca_id and m.cpu_cores=sp_cpu and m.ram=sp_ram and m.disk_size=sp_disk_size and m.order_id is null order by m.price limit sp_no_of_machines;
-
+		
 		if ( temp_count > sp_no_of_machines ) then
 
 		insert into order_ (order_date, number_of_machines, ca_id, customer_id, cpu_cores, ram, disk_size, order_end_date, order_amount, order_cost) values (CURDATE(), sp_no_of_machines,sp_ca_id,sp_customer_id, sp_cpu, sp_ram, sp_disk_size, null, temp_price*1.2, temp_price);

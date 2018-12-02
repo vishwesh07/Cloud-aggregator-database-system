@@ -11,7 +11,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="../static/css/signup.css" rel="stylesheet">
     <script src="../static/js/jquery-3.3.1.js"></script>
-    <script src="../static/js/login.js"></script>
+    <script src="../static/js/admin.js"></script>
   </head>
   <body>
     <div class="container" style="font-size:small">
@@ -44,56 +44,23 @@
             <tr>
                 <th>Order_Id</th>
                 <th>Order Start Date</th>
-                <th>RAM</th>
+                <th>No_Of_Machines</th>
+                <th>Customer_Id</th>
                 <th>CPU_Cores</th>
+                <th>RAM</th>
                 <th>Disk Size</th>
-                 <th>No_Of_Machines</th>
+                <th>Order Total Amount</th>
+                <th>Order Total Cost</th>
                 <th>CSP</th>
-                 <th>Customer_Id</th>
-                <th>Amount</th>
+                <th>CSP Quantity</th>
+                <th>CSP Cost</th>
+                <th>Order Profit</th>
             </tr>
 
         </thead>
 
 
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>John</td>
-               <td>18</td>
-                <td>123456789</td>
-                <td>12</td>
-                <td>AWS</td>
-                <td>12</td>
-                <td>AWS</td>
-                <td>120</td>
-
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Peter</td>
-                <td>18</td>
-                <td>123456789</td>
-                  <td>12</td>
-              <td>AWS</td>
-                <td>12</td>
-                <td>AWS</td>
-                <td>120</td>
-
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>John</td>
-                <td>18</td>
-                <td>123456789</td>
-                  <td>20</td>
-                <td>AWS</td>
-                <td>12</td>
-                <td>AWS</td>
-                <td>120</td>
-
-            </tr>
-
+        <tbody class="currentOrders">
         </tbody>
 		</table>
 
@@ -110,7 +77,7 @@
 
 
    <div class="panel panel-primary">
-                <div class="panel-heading" ><h4> Total Profit Earned: </h4> </div>
+                <div class="panel-heading" ><h4>  </h4> </div>
 
 
 </div>
