@@ -154,6 +154,7 @@ def currentOrders():
         if _id and _ca_id and _role == "customer":
             return json.dumps({'results': sql_select('select * from order_customer where customer_id="'+_id+'" and ca_id="'+ _ca_id +'" and order_end_date is null')})
         elif _id and _ca_id and _role == "csp":
+            print('select * from order_csp where csp_id="' + _id + '" and ca_id="' + _ca_id + '" and order_end_date is null')
             return json.dumps({'results': sql_select('select * from order_csp where csp_id="' + _id + '" and ca_id="' + _ca_id + '" and order_end_date is null')})
         elif _id and _ca_id and _role == "ca":
             return json.dumps({'results': sql_select('select * from order_ o join receives r on o.order_id=r.order_id where o.ca_id="' + _ca_id + '" and o.order_end_date is null')})
@@ -189,7 +190,8 @@ def getMachines():
         if _id and _ca_id and _role == "customer":
             return json.dumps({'results': sql_select('select m.*, ord.ca_id from order_customer ord join machine_customer m on ord.order_id=m.order_id where ord.customer_id="'+_id+'" and ord.ca_id="'+ _ca_id +'" and order_end_date is null')})
         elif _id and _ca_id and _role == "csp":
-            return json.dumps({'results': sql_select('select m.* from order_csp r join machine m on r.order_id=m.order_id where r.csp_id="' + _id + '" and r.ca_id="' + _ca_id + '" and order_end_date is null')})
+            print('select m.* from order_csp r join machine m on r.order_id=m.order_id where r.csp_id="' + _id + '" and r.ca_id="' + _ca_id + '" and order_end_date is null')
+            return json.dumps({'results': sql_select('select m.* from machine m where m.csp_id="' + _id + '";')})
         elif _id and _ca_id and _role == "ca":
             print('select * from order_ ord join machine m on ord.order_id=m.order_id where ord.ca_id="' + _ca_id + '" and order_end_date is null')
             return json.dumps({'results': sql_select('select m.*, ord.customer_id from order_ ord join machine m on ord.order_id=m.order_id where ord.ca_id="' + _ca_id + '" and order_end_date is null')})
@@ -446,6 +448,7 @@ def updateProfile():
                 else:
                     return json.dumps({'error': str(data[0])})
             elif _role == 'customer':
+                print(request.form)
                 cursor.callproc('sp_update_customer', (_id, _email, _name, _hashed_password, _bank_account_number))
                 data = cursor.fetchall()
                 if len(data) is 0:
@@ -463,6 +466,31 @@ def updateProfile():
                     return json.dumps({'error': str(data[0])})
             else:
                 return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/updateCustomerProfile', methods = ['POST'])
+def updateCustomerProfile():
+    try:
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
+        _name = request.form['inputName']
+        _email = request.form['inputEmail']
+        _bank_account_number = request.form['inputBankAccount']
+        _offer_id = request.form['inputOfferId']
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        if _id and _role:
+            if _role == 'customer':
+                cursor.callproc('sp_update_customer_admin', (_id, _email, _name, _bank_account_number, _offer_id))
+                data = cursor.fetchall()
+                if len(data) is 0:
+                    conn.commit()
+                    return json.dumps({'results': {"_name": _name, "_bank_account_number": _bank_account_number}})
+                else:
+                    return json.dumps({'error': str(data[0])})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
     except Exception as e:
         return json.dumps({'error': str(e)})
 
@@ -527,16 +555,6 @@ def createOffer():
     except Exception as e:
         return json.dumps({'error': str(e)})
 
-@app.route('/assignOffer', methods = ['GET'])
-def assignOffer():
-    try:
-        _offer_id = request.args['inputOfferId']
-        _customer_id = request.args['inputCustomerId']
-        sql_update('update customer set customer_offer_id = '+ _offer_id +' where customer_id= ' + _customer_id + ';')
-        return json.dumps({'message': 'Offer assigned successfully !'})
-    except Exception as e:
-        return json.dumps({'error': str(e)})
-
 @app.route('/getOffer', methods = ['GET'])
 def getOffer():
     try:
@@ -547,8 +565,60 @@ def getOffer():
             if _role == 'ca':
                 return json.dumps({'results': sql_select('select * from offer where ca_id = '+ _ca_id +';')})
             if _role == 'customer':
-                print('select * from customer c join offer o on c.customer_offer_id=o.offer_id where  c.customer_id = '+ _customer_id +';')
                 return json.dumps({'results': sql_select('select * from customer c join offer o on c.customer_offer_id=o.offer_id where  c.customer_id = '+ _customer_id +';')})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/deleteOffer', methods = ['DELETE'])
+def deleteOffer():
+    try:
+        _offer_id = request.args['offerId']
+        if _offer_id:
+            return json.dumps({'results': sql_delete('delete from offer where offer_id = '+ _offer_id +';')})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/endOrder', methods = ['GET'])
+def endOrder():
+    try:
+        _order_id = request.args['orderId']
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        if _order_id:
+            cursor.callproc('sp_end_order', (_order_id, _order_id))
+            data = cursor.fetchall()
+            if len(data) is 0:
+                conn.commit()
+                return json.dumps({'html': '<span>Order Ended</span>'})
+            else:
+                return json.dumps({'error': str(data[0])})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/addMachine', methods = ['POST'])
+def addMachine():
+    print(request.form)
+    try:
+        _csp_id = request.args['inputId']
+        _ip_address = request.form['inputIpAddress']
+        _ram = request.form['inputRam']
+        _disk_size = request.form['inputDiskSize']
+        _price = request.form['inputPrice']
+        _cpu_cores = request.form['inputCpuCores']
+        sql_insert('insert into machine (csp_id, disk_size, ram, cpu_cores, ip_address, price, order_id ) values ( "'+ _csp_id +'", "' + _disk_size + '", '+_ram+', '+_cpu_cores+', "'+_ip_address+'", '+_price+',null);')
+        return json.dumps({'message': 'Machine created successfully !'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+
+@app.route('/deleteMachine', methods = ['DELETE'])
+def deleteMachine():
+    try:
+        _mac_id = request.args['inputId']
+        if _mac_id:
+            return json.dumps({'results': sql_delete('delete from machine where mac_id = '+ _mac_id +';')})
     except Exception as e:
         return json.dumps({'error': str(e)})
 

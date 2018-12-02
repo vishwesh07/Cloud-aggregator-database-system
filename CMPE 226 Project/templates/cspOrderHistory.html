@@ -11,7 +11,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="../static/css/signup.css" rel="stylesheet">
     <script src="../static/js/jquery-3.3.1.js"></script>
-    <script src="../static/js/login.js"></script>
+    <script src="../static/js/cspOrderHistory.js"></script>
   </head>
   <body>
     <div class="container" style="font-size:small">
@@ -36,61 +36,20 @@
 
 
           <table class="table table-bordered">
-
-        <thead class = "table-dark">
-
+            <thead class = "table-dark">
             <tr>
                 <th>Order_Id</th>
-                 <th>Machine_Id</th>
-                 <th>Order Start Date</th>
-                <th>Order End Date</th>
-                <th>RAM</th>
+                <th>Order Start Date</th>
+                <th>Number of Machines</th>
                 <th>CPU_Cores</th>
+                <th>RAM</th>
                 <th>Disk Size</th>
-                 <th>No_Of_Machines</th>
-                 <th>Owned By</th>
+                <th>Order End Date</th>
             </tr>
-
-        </thead>
-
-
-        <tbody>
-            <tr>
-                <td>1</td>
-                 <td>1</td>
-                <td>1</td>
-                <td>John</td>
-                <td>Carter</td>
-               <td>18</td>
-                <td>123456789</td>
-                <td>12</td>
-                <td>AWS</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                 <td>1</td>
-                <td>1</td>
-                <td>Peter</td>
-                <td>Parker</td>
-                <td>18</td>
-                <td>123456789</td>
-                  <td>12</td>
-              <td>AWS</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                 <td>1</td>
-                <td>1</td>
-                <td>John</td>
-                <td>Rambo</td>
-                <td>18</td>
-                <td>123456789</td>
-                  <td>20</td>
-                <td>AWS</td>
-            </tr>
-
-        </tbody>
-		</table>
+            </thead>
+            <tbody class="orderHistory">
+            </tbody>
+        </table>
 
 
  <div class="panel panel-danger">

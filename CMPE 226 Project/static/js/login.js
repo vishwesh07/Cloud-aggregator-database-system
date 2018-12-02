@@ -24,6 +24,8 @@ $(function() {
                 sessionStorage.setItem("role", dropdownval);
                 if(dropdownval=="ca"){
                     window.location.replace("http://localhost:5000/showAdmin");
+                } else if(dropdownval=="csp") {
+                    window.location.replace("http://localhost:5000/showCsp");
                 } else {
                     window.location.replace("http://localhost:5000/showCustomerAccountDisplay");
                 }

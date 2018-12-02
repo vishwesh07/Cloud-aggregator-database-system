@@ -9,7 +9,7 @@ create table csp
   csp_name varchar(255) not null,
   csp_password varchar(255) not null,
   csp_join_date date not null,
-  csp_bank_account_number int not null,
+  csp_bank_account_number bigint not null,
   primary key (csp_id)
 );
 
@@ -35,7 +35,7 @@ create table ca
   ca_id int not null auto_increment,
   ca_email_id varchar(255) not null,
   ca_name char(255) not null,
-  ca_bank_account_number int not null,
+  ca_bank_account_number bigint not null,
   ca_password varchar(255) not null,
   primary key(ca_id)
 );
@@ -47,7 +47,7 @@ create table customer
   customer_name char(255) not null,
   customer_password varchar(255) not null,
   customer_join_date date not null,
-  customer_bank_account int(16) not null,
+  customer_bank_account bigint(16) not null,
   customer_offer_id int,
   primary key(customer_id)
 );
@@ -161,7 +161,8 @@ alter table onboards add constraint fk_onboards_customer_id foreign key (custome
 #####alter table order_ add order_end_date date not null;
 
 #####alter table customer add customer_offer_id int;
-alter table customer add constraint fk_customer_offer_id foreign key (customer_offer_id)  references offer(offer_id);
+alter table customer add constraint fk_customer_offer_id foreign key (customer_offer_id)  references offer(offer_id) on delete set null;
+#####alter table customer drop foreign key fk_customer_offer_id;
 
 ######alter table bill add month int not null;
 ######alter table bill add year int not null;
@@ -348,7 +349,7 @@ create definer=`root`@`localhost` procedure `sp_create_customer`(
 in sp_email_id varchar(255),
 in sp_name varchar(255),
 in sp_password varchar(255),
-in sp_bank_account_number int,
+in sp_bank_account_number bigint,
 in sp_ca_id int
 )
 begin
@@ -380,7 +381,7 @@ create definer=`root`@`localhost` procedure `sp_create_csp`(
 in c_email_id varchar(200),
 in c_name varchar(200),
 in c_password varchar(200),
-in c_bank_account_number int,
+in c_bank_account_number bigint,
 in c_ca_id int
 )
 begin
@@ -409,7 +410,7 @@ create definer=`root`@`localhost` procedure `sp_create_ca`(
 in ca_email_id varchar(200),
 in ca_name varchar(200),
 in ca_password varchar(200),
-in ca_bank_account_number int
+in ca_bank_account_number bigint
 )
 begin
 
@@ -585,7 +586,7 @@ create definer=`root`@`localhost` procedure `sp_update_ca`(
     in sp_email_id varchar(255) ,
     in sp_name varchar(255) ,
     in sp_password varchar(255),
-    in sp_bank_account_number int
+    in sp_bank_account_number bigint
 )
 begin
     if (select exists (select 1 from ca where ca_id = sp_id)) then
@@ -604,7 +605,7 @@ create definer=`root`@`localhost` procedure `sp_update_csp`(
     in sp_email_id varchar(255) ,
     in sp_name varchar(255) ,
     in sp_password varchar(255),
-    in sp_bank_account_number int
+    in sp_bank_account_number bigint
 )
 begin
     if (select exists (select 1 from csp where csp_id = sp_id)) then
@@ -622,10 +623,42 @@ create definer=`root`@`localhost` procedure `sp_update_customer`(
     in sp_email_id varchar(255) ,
     in sp_name varchar(255) ,
     in sp_password varchar(255),
-    in sp_bank_account_number int 	)
+    in sp_bank_account_number bigint)
 begin
     if (select exists (select 1 from customer where customer_id = sp_id)) then
         update customer set customer_name = sp_name, customer_email_id = sp_email_id, customer_password = sp_password, customer_bank_account = sp_bank_account_number where customer_id = sp_id;
+	else
+        select 'Not enough resources available!!';
+    end if;
+end$$ delimiter ;
+
+###### Stored Procedure to update customer delimiter $$
+delimiter $$
+use multicloud $$
+create definer=`root`@`localhost` procedure `sp_update_customer_admin`(
+    in sp_id int,
+    in sp_email_id varchar(255) ,
+    in sp_name varchar(255) ,
+    in sp_bank_account_number bigint,
+ 	in sp_offer_id int )
+begin
+    if (select exists (select 1 from customer where customer_id = sp_id)) then
+        update customer set customer_name = sp_name, customer_email_id = sp_email_id, customer_bank_account = sp_bank_account_number, customer_offer_id=sp_offer_id where customer_id = sp_id;
+	else
+        select 'Not enough resources available!!';
+    end if;
+end$$ delimiter ;
+
+###### Stored Procedure to update customer delimiter $$
+delimiter $$
+use multicloud $$
+create definer=`root`@`localhost` procedure `sp_end_order`(
+    in sp_order_id int,
+    in sp_order_id_2 int)
+begin
+    if (select exists (select 1 from order_ where order_id = sp_order_id)) then
+        update order_ set order_end_date = curdate() where order_id = sp_order_id;
+        update machine set order_id=null where order_id = sp_order_id;
 	else
         select 'Not enough resources available!!';
     end if;
