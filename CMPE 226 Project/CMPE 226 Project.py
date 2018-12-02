@@ -5,6 +5,7 @@ from pymongo import MongoClient
 from werkzeug import generate_password_hash, check_password_hash
 from crud import sql_select, sql_delete, sql_update, sql_insert
 from datetime import datetime
+import logging
 
 app = Flask(__name__)
 mysql = MySQL()
@@ -26,102 +27,127 @@ mongodb = client['multicloud']
 
 @app.route('/')
 def main():
+    app.logger.info('In main API, rendering index.html')
     return render_template('index.html')
 
 @app.route('/showSignUp')
 def showSignUp():
+    app.logger.info('In showSignUp API, rendering signup.html')
     return render_template('signup.html')
 
 @app.route('/showLogin')
 def showLogin():
+    app.logger.info('In showLogin API, rendering login.html')
     return render_template('login.html')
 
 @app.route('/showCustomerAccountDisplay')
 def showCustomerAccountDisplay():
+    app.logger.info('In showCustomerAccountDisplay API, rendering customerAccountDisplay.html')
     return render_template('customerAccountDisplay.html')
 
 @app.route('/showMachines')
 def showMachines():
+    app.logger.info('In showMachines API, rendering machines.html')
     return render_template('machines.html')
 
 @app.route('/showOrderHistory')
 def showOrderHistory():
+    app.logger.info('In showOrderHistory API, rendering orderHistory.html')
     return render_template('orderHistory.html')
 
 @app.route('/showBilling')
 def showBilling():
+    app.logger.info('In showBilling API, rendering billing.html')
     return render_template('billing.html')
 
 @app.route('/showProfile')
 def showProfile():
+    app.logger.info('In showProfile API, rendering profile.html')
     return render_template('profile.html')
 
 @app.route('/showHelp')
 def showHelp():
+    app.logger.info('In showHelp API, rendering help.html')
     return render_template('help.html')
 
 @app.route('/showCsp')
 def showCsp():
+    app.logger.info('In showCsp API, rendering csp.html')
     return render_template('csp.html')
 
 @app.route('/showCspMachines')
 def showCspMachines():
+    app.logger.info('In showCspMachines API, rendering cspMachines.html')
     return render_template('cspMachines.html')
 
 @app.route('/showCspOrderHistory')
 def showCspOrderHistory():
+    app.logger.info('In showCspOrderHistory API, rendering cspOrderHistory.html')
     return render_template('cspOrderHistory.html')
 
 @app.route('/showCspProfile')
 def showCspProfile():
+    app.logger.info('In showCspProfile API, rendering cspProfile.html')
     return render_template('cspProfile.html')
 
 @app.route('/showCspHelp')
 def showCspHelp():
+    app.logger.info('In showCspHelp API, rendering cspHelp.html')
     return render_template('cspHelp.html')
 
 @app.route('/showCspBilling')
 def showCspBilling():
+    app.logger.info('In showCspBilling API, rendering cspBilling.html')
     return render_template('cspBilling.html')
 
 @app.route('/showAdmin')
 def showAdmin():
+    app.logger.info('In showAdmin API, rendering admin.html')
     return render_template('admin.html')
 
 @app.route('/showAdminMachines')
 def showAdminMachines():
+    app.logger.info('In showAdminMachines API, rendering adminMachines.html')
     return render_template('adminMachines.html')
 
 @app.route('/showAdminOrder')
 def showAdminOrder():
+    app.logger.info('In showAdminOrder API, rendering adminOrder.html')
     return render_template('adminOrder.html')
 
 @app.route('/showAdminCustomers')
 def showAdminCustomers():
+    app.logger.info('In showAdminCustomers API, rendering adminCustomers.html')
     return render_template('adminCustomers.html')
 
 @app.route('/showAdminCSP')
 def showAdminCSP():
+    app.logger.info('In showAdminCSP API, rendering adminCSP.html')
     return render_template('adminCSP.html')
 
 @app.route('/showAdminBilling')
 def showAdminBilling():
+    app.logger.info('In showAdminBilling API, rendering adminBilling.html')
     return render_template('adminBilling.html')
 
 @app.route('/showAdminProfile')
 def showAdminProfile():
+    app.logger.info('In showAdminProfile API, rendering adminProfile.html')
     return render_template('adminProfile.html')
 
 @app.route('/showAdminComplaints')
 def showAdminComplaints():
+    app.logger.info('In showAdminComplaints API, rendering adminComplaints.html')
     return render_template('adminComplaints.html')
 
 @app.route('/showAdminOffer')
 def showAdminOffer():
+    app.logger.info('In showAdminOffer API, rendering adminOffer.html')
     return render_template('adminOffer.html')
 
 @app.route('/myCSPs', methods=['GET'])
 def myCSPs():
+    app.logger.info("In myCSPs API, retrieving csp's for given ")
     try:
         _ca_id = request.args['inputCaId']
         if _ca_id:
@@ -516,4 +542,7 @@ def get_tickets():
         return json.dumps({'error': str(e)})
 
 if __name__ == '__main__':
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
     app.run(debug=True)

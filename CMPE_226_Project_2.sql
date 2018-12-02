@@ -62,6 +62,7 @@ create table bill
   month int not null,
   year int not null,
   is_paid bool default False,
+  offer_id int default null,
   primary key(bill_id)
 );
 
@@ -306,18 +307,18 @@ insert into offer values (4324,'Platinum Offer',20,4324323, null, False);
 insert into offer values (4325,'Gold Bang Offer',15,4324323, null, False);
 
 ##### Bill
-insert into bill values (0001,5000,1234,12121,11224,'01','2000', False);
-insert into bill values (0002,1000,12361,12121,11227,'01','2000', False);
-insert into bill values (0003,2000,12364,12121,11220,'01','2000', False);
+insert into bill values (0001,5000,1234,12121,11224,'01','2000', False, null);
+insert into bill values (0002,1000,12361,12121,11227,'01','2000', False, null);
+insert into bill values (0003,2000,12364,12121,11220,'01','2000', False, null);
 
 
-insert into bill values (1004,3000,1235,232323,11225,'02','2000', False);
-insert into bill values (1005,53000,12362,232323,11228,'03','2000', False);
-insert into bill values (1006,51000,1236,232323,11241,'01','2000', False);
+insert into bill values (1004,3000,1235,232323,11225,'02','2000', False, null);
+insert into bill values (1005,53000,12362,232323,11228,'03','2000', False, null);
+insert into bill values (1006,51000,1236,232323,11241,'01','2000', False, null);
 
-insert into bill values (2004,4000,1236,4324323,11226,'07','2000', False);
-insert into bill values (2005,43000,12364,4324323,11229,'08','2000', False);
-insert into bill values (2006,41000,1235,4324323,11241,'09','2000', False);
+insert into bill values (2004,4000,1236,4324323,11226,'07','2000', False, null);
+insert into bill values (2005,43000,12364,4324323,11229,'08','2000', False, null);
+insert into bill values (2006,41000,1235,4324323,11241,'09','2000', False, null);
 
 ##### Order
 insert into order_ values(0010,'2000-02-01',5,12121,11224,16,16,"1TB",'2000-10-10', 40, 30);
@@ -570,7 +571,7 @@ IF (offer_id is not null) and (offer_discount != 0) THEN
  update offer as o set o.is_used = True where o.offer_id = offer_id and o.discount = offer_discount;
  END IF;
 
-insert into bill (bill_amount, csp_id, ca_id, customer_id, month, year, is_paid) values (total_monthly_bill, null, sp_ca_id, sp_customer_id, sp_month, sp_year, False);
+insert into bill (bill_amount, csp_id, ca_id, customer_id, month, year, is_paid, offer) values (total_monthly_bill, null, sp_ca_id, sp_customer_id, sp_month, sp_year, False, offer_id);
 
 select concat("New bill with cost: ", total_monthly_bill, " with discount: ", offer_discount," generated for customer: ", sp_customer_id, " by ca: ", sp_ca_id, " for month: ", sp_month, " year: ", sp_year);
 
