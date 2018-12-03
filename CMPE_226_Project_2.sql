@@ -139,9 +139,6 @@ create view machine_customer as select mac_id, disk_size, ram, cpu_cores, ip_add
 create view customer_bill as select bill_id, customer_id, ca_id, month, year, bill_amount, is_paid from bill where csp_id is null;
 create view ca_bill as select bill_id, ca_id, csp_id, month, year, bill_amount, is_paid from bill where customer_id is null;
 
-create view customer_bill as select bill_id, customer_id, ca_id, month, year, bill_amount, is_paid from bill where csp_id is null;
-create view ca_bill as select bill_id, ca_id, csp_id, month, year, bill_amount, is_paid from bill where customer_id is null;
-
 alter table order_ add constraint fk_order_ca_id foreign key (ca_id) references ca(ca_id) ;
 alter table order_ add constraint fk_order_customer_id foreign key (customer_id) references customer(customer_id);
 
