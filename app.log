@@ -1,0 +1,29 @@
+WARNING:werkzeug: * Debugger is active!
+INFO:flask.app:In main API, rendering index.html
+INFO:flask.app:In showSignUp API, rendering signup.html
+INFO:flask.app:In signup API, signing up customer, ca and csp
+INFO:flask.app:In showLogin API, rendering login.html
+INFO:flask.app:In login API, logging in for ca or csp or customer
+DEBUG:flask.app:In login API, customer - logged in:
+INFO:flask.app:In showCustomerAccountDisplay API, rendering customerAccountDisplay.html
+INFO:flask.app:In currentOrders API, retrieving current orders of customer or csp or ca
+DEBUG:flask.app:In currentOrders API, retrieved current orders of customer:
+INFO:flask.app:In showMachines API, rendering machines.html
+INFO:flask.app:In getMachines API, retrieving machines ordered by customers or ca or available with csp
+INFO:flask.app:In showCustomerAccountDisplay API, rendering customerAccountDisplay.html
+DEBUG:flask.app:In getMachines API, retrieved machines ordered by customers:
+INFO:flask.app:In currentOrders API, retrieving current orders of customer or csp or ca
+DEBUG:flask.app:In currentOrders API, retrieved current orders of customer:
+INFO:flask.app:In palceOrder API, placing order for customer
+INFO:flask.app:In showMachines API, rendering machines.html
+INFO:flask.app:In getMachines API, retrieving machines ordered by customers or ca or available with csp
+DEBUG:flask.app:In getMachines API, retrieved machines ordered by customers:
+INFO:flask.app:In showOrderHistory API, rendering orderHistory.html
+INFO:flask.app:In showBilling API, rendering billing.html
+INFO:flask.app:In current_bill API, retrieving unpaid current bills for customer or ca
+INFO:flask.app:In bill_history API, retrieving paid bills history for customer or ca
+DEBUG:flask.app:In current_bill API, retrieved unpaid current bills for customer:
+DEBUG:flask.app:In bill_history API, retrieved paid bills history for customer:
+INFO:flask.app:In showProfile API, rendering profile.html
+INFO:flask.app:In showHelp API, rendering help.html
+INFO:flask.app:In myCSPs API, retrieving csp's for given ca
