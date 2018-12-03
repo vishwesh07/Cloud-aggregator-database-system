@@ -11,7 +11,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="../static/css/signup.css" rel="stylesheet">
     <script src="../static/js/jquery-3.3.1.js"></script>
-    <script src="../static/js/machines.js"></script>
+    <script src="../static/js/cspMachines.js"></script>
   </head>
   <body>
     <div class="container" style="font-size:small">
@@ -39,46 +39,21 @@
         <thead class = "table-dark">
 
             <tr>
+
                 <th>Mac_id</th>
+                <th>CA_id</th>
                 <th>Disk Size</th>
                 <th>RAM</th>
                 <th>CPU_Cores</th>
                 <th>Ip_address</th>
+                <th>Price</th>
                 <th>Order_id</th>
             </tr>
 
         </thead>
 
 
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>John</td>
-                <td>Carter</td>
-               <td>18</td>
-                <td>123456789</td>
-                <td>12</td>
-                <td>AWS</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Peter</td>
-                <td>Parker</td>
-                <td>18</td>
-                <td>123456789</td>
-                  <td>12</td>
-              <td>AWS</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>John</td>
-                <td>Rambo</td>
-                <td>18</td>
-                <td>123456789</td>
-                  <td>20</td>
-                <td>AWS</td>
-            </tr>
-
+        <tbody class="currentOrders">
         </tbody>
 		</table>
 
@@ -89,59 +64,8 @@
     </div>
 
 
-
-
-        <center><b><h3>Machines Available</h3></b></center>
-          <table class="table table-bordered">
-
-        <thead class = "table-dark">
-
-            <tr>
-                <th>Machine Id</th>
-                <th>RAM</th>
-                <th>CPU_Cores</th>
-                <th>Disk Size</th>
-                 <th>No_Of_Machines</th>
-                 <th>Price</th>
-            </tr>
-
-        </thead>
-
-
-        <tbody>
-            <tr>
-                <td>4</td>
-                <td>8</td>
-                <td>18</td>
-                <td>64</td>
-                <td>20</td>
-                <td>120</td>
-
-            </tr>
-            <tr>
-                 <td>4</td>
-                <td>8</td>
-                <td>18</td>
-                <td>64</td>
-                <td>20</td>
-                <td>120</td>
-
-            </tr>
-            <tr>
-              <td>4</td>
-                <td>8</td>
-                <td>18</td>
-                <td>64</td>
-                <td>20</td>
-                <td>120</td>
-
-            </tr>
-
-        </tbody>
-		</table>
-
                 <!-- <div class="button" style="padding-top: 20px"> -->
-                <button type="button" class="btn btn-primary btn-sm btn-block" data-toggle="modal" data-target="#myModal">Order New Machines</button>
+                <button type="button" class="btn btn-primary btn-sm btn-block" data-toggle="modal" data-target="#myModal">New Machines</button>
 
 
 
@@ -160,57 +84,36 @@
         </div>
 
 
-          <form>
-                              <div class="form-group row">
-                                <label for="name" class="col-4 col-form-label">Machine_Id*</label>
-                                <div class="col-8">
-                                  <input id="machine_id" name="machine_id" placeholder="machine_id" class="form-control here" required="required" type="text">
-                                </div>
-                              </div>
+          <form class="" style="margin:5%;">
 
                               <div class="form-group row">
-                                <label for="email" class="col-4 col-form-label">IP_Address*</label>
+                                <label for="inputIpAddress" class="col-4 col-form-label">IP_Address*</label>
                                 <div class="col-8">
-                                  <input id="ip_address" name="ip_address" placeholder="ip_address" class="form-control here" required="required" type="number">
+                                  <input id="inputIpAddress" name="inputIpAddress" placeholder="ip_address" value="0.0.0.0" class="form-control here" required="required" type="text">
                                 </div>
                               </div>
                               <div class="form-group row">
-                                <label for="website" class="col-4 col-form-label">Price*</label>
+                                <label for="inputPrice" class="col-4 col-form-label">Price*</label>
                                 <div class="col-8">
-                                  <input id="price" name="price" placeholder="price" class="form-control here" type="number">
+                                  <input id="inputPrice" name="inputPrice" placeholder="price" class="form-control here" type="number" value="10">
                                 </div>
-
-
-
-
                               </div>
 								<div class="form-group row">
-                                <label for="newpass" class="col-4 col-form-label">RAM*</label>
+                                <label for="inputRam" class="col-4 col-form-label">RAM*</label>
                                 <div class="col-8">
-                                  <input id="ram" name="ram" placeholder="Enter RAM Size in Giga Bytes" class="form-control here" type="Number">
+                                  <input id="inputRam" name="inputRam" placeholder="Enter RAM Size in Giga Bytes" class="form-control here" type="Number" value="4">
                                 </div>
                               </div>
                               <div class="form-group row">
-                                <label for="newpass" class="col-4 col-form-label">CPU_Cores*</label>
+                                <label for="inputCpuCores" class="col-4 col-form-label">CPU_Cores*</label>
                                 <div class="col-8">
-                                  <input id="cpuCores" name="cpuCores" placeholder="Enter CPU Cores" class="form-control here" type="number">
+                                  <input id="inputCpuCores" name="inputCpuCores" placeholder="Enter CPU Cores" class="form-control here" type="number" value="4">
                                 </div>
                               </div>
                                  <div class="form-group row">
-                                <label for="newpass" class="col-4 col-form-label">Disk Size*</label>
+                                <label for="inputDiskSize" class="col-4 col-form-label">Disk Size*</label>
                                 <div class="col-8">
-                                  <input id="diskSize" name="diskSize" placeholder="Enter Disk Size in Giga Bytes" class="form-control here" type="number">
-                                </div>
-                              </div>
-                                  <div class="form-group row">
-                                <label for="newpass" class="col-4 col-form-label">No of Machines*</label>
-                                <div class="col-8">
-                                  <input id="noOfMachines" name="noOfMachines" placeholder="No. of Machines Required of this Config." class="form-control here" type="number">
-                                </div>
-                              </div>
-                              <div class="form-group row">
-                                <div class="offset-4 col-8">
-                                  <button name="submit" type="submit" class="btn btn-primary btn-sm">Order</button>
+                                  <input id="inputDiskSize" name="inputDiskSize" placeholder="Enter Disk Size in TB: 2TB" class="form-control here" type="text" value="2TB">
                                 </div>
                               </div>
                             </form>
@@ -218,6 +121,7 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button name="button" type="button" class="btn btn-primary btn-sm orderMachine" data-dismiss="modal">Create</button>
         </div>
       </div>
 

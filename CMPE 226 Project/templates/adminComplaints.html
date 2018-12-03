@@ -11,7 +11,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="../static/css/signup.css" rel="stylesheet">
     <script src="../static/js/jquery-3.3.1.js"></script>
-    <script src="../static/js/login.js"></script>
+    <script src="../static/js/adminComplaints.js"></script>
   </head>
   <body>
     <div class="container" style="font-size:small">
@@ -39,79 +39,28 @@
 
           <table class="table table-bordered">
 
-        <thead class = "table-dark">
+            <thead class = "table-dark">
 
-            <tr>
-                <th>Customer_Id</th>
-                <th>Name</th>
-                <th>Email</th>
-                 <th>Complaint_Id</th>
-                <th>Is Resolved</th>
+                <tr>
+                    <th>Issue id</th>
+                    <th>Issue title</th>
+                     <th>Issue description</th>
+                    <th>Issue date</th>
+                    <th>Is resolved</th>
+                </tr>
 
-            </tr>
-
-        </thead>
+            </thead>
 
 
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>John</td>
-               <td>18</td>
-                <td>123456789</td>
-                <td>Yes</td>
+            <tbody class="orderHistory">
 
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Peter</td>
-                <td>18</td>
-                <td>123456789</td>
-
-                  <td><button type="button" class="btn-sm btn-primary" data-toggle="modal" data-target="#myModa1Resolve">Resolve</button> </td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>John</td>
-                <td>18</td>
-                <td>123456789</td>
-                  <td>Yes</td>
-            </tr>
-
-        </tbody>
-		</table>
-
-<div class="panel panel-danger">
+            </tbody>
+            </table>
+          <div class="ticketResolveSuccess"> Issue resolved!</div>
+            <div class="panel panel-danger">
                 <div class="panel-heading" ><h4> </h4> </div>
 
-   </div>
-
-          <!-- Modal for Resolve Complaints -->
-          <div class="modal fade" id="myModa1Resolve" role="dialog">
-            <div class="modal-dialog">
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" style="padding-top: 10px"><b>Remind Bill</b></h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <form style="padding: 20px;" class="placeOrderForm">
-                        <h3>An email has been sent with resolution</h3>
-
-
-
-
-
-
-                        <div class="form-group row">
-                            <div class="offset-4 col-8">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
             </div>
-        </div>
 
 
       <footer class="footer">

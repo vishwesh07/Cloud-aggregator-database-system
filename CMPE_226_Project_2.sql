@@ -9,7 +9,7 @@ create table csp
   csp_name varchar(255) not null,
   csp_password varchar(255) not null,
   csp_join_date date not null,
-  csp_bank_account_number int not null,
+  csp_bank_account_number bigint not null,
   primary key (csp_id)
 );
 
@@ -35,7 +35,7 @@ create table ca
   ca_id int not null auto_increment,
   ca_email_id varchar(255) not null,
   ca_name char(255) not null,
-  ca_bank_account_number int not null,
+  ca_bank_account_number bigint not null,
   ca_password varchar(255) not null,
   primary key(ca_id)
 );
@@ -47,8 +47,9 @@ create table customer
   customer_name char(255) not null,
   customer_password varchar(255) not null,
   customer_join_date date not null,
-  customer_bank_account int(16) not null,
+  customer_bank_account bigint(16) not null,
   customer_offer_id int,
+  customer_isDelete boolean default false,
   primary key(customer_id)
 );
 
@@ -137,6 +138,9 @@ create view machine_customer as select mac_id, disk_size, ram, cpu_cores, ip_add
 create view customer_bill as select bill_id, customer_id, ca_id, month, year, bill_amount, is_paid from bill where csp_id is null;
 create view ca_bill as select bill_id, ca_id, csp_id, month, year, bill_amount, is_paid from bill where customer_id is null;
 
+create view customer_bill as select bill_id, customer_id, ca_id, month, year, bill_amount, is_paid from bill where csp_id is null;
+create view ca_bill as select bill_id, ca_id, csp_id, month, year, bill_amount, is_paid from bill where customer_id is null;
+
 alter table order_ add constraint fk_order_ca_id foreign key (ca_id) references ca(ca_id) ;
 alter table order_ add constraint fk_order_customer_id foreign key (customer_id) references customer(customer_id);
 
@@ -164,7 +168,8 @@ alter table onboards add constraint fk_onboards_customer_id foreign key (custome
 #####alter table order_ add order_end_date date not null;
 
 #####alter table customer add customer_offer_id int;
-alter table customer add constraint fk_customer_offer_id foreign key (customer_offer_id)  references offer(offer_id);
+alter table customer add constraint fk_customer_offer_id foreign key (customer_offer_id)  references offer(offer_id) on delete set null;
+#####alter table customer drop foreign key fk_customer_offer_id;
 
 ######alter table bill add month int not null;
 ######alter table bill add year int not null;
@@ -189,15 +194,15 @@ insert into ca values (123,'multicloud@gmail.com','multicloud',1361,'pbkdf2:sha2
 
 
 ###### Customer
-insert into customer values (11224,'Rohit@gmail.com','Rohit','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-09-09',3434,null);
-insert into customer values (11225,'Li@gmail.com','Li','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-09-19',3434,null);
-insert into customer values (11226,'Rakesh@gmail.com','Rakesh','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-09-29',3434,null);
-insert into customer values (11227,'Laxmi@gmail.com','Laxmi','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-01-09',3434,null);
-insert into customer values (11228,'Ravi@gmail.com','Ravi', 'pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-02-09',3434,null);
-insert into customer values (11229,'John@gmail.com','John','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-03-09',3434,null);
-insert into customer values (11220,'Wayne@gmail.com','Wayne','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-04-09',3434,null);
-insert into customer values (11241,'Kaka@gmail.com','Kaka','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-09-05',3434,null);
-insert into customer values (11242,'maulik@gmail.com','maulik','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-09-05',3434,null);
+insert into customer values (11224,'Rohit@gmail.com','Rohit','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-09-09',3434,null, False);
+insert into customer values (11225,'Li@gmail.com','Li','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-09-19',3434,null, False);
+insert into customer values (11226,'Rakesh@gmail.com','Rakesh','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-09-29',3434,null, False);
+insert into customer values (11227,'Laxmi@gmail.com','Laxmi','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-01-09',3434,null, False);
+insert into customer values (11228,'Ravi@gmail.com','Ravi', 'pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-02-09',3434,null, False);
+insert into customer values (11229,'John@gmail.com','John','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-03-09',3434,null, False);
+insert into customer values (11220,'Wayne@gmail.com','Wayne','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-04-09',3434,null, False);
+insert into customer values (11241,'Kaka@gmail.com','Kaka','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-09-05',3434,null, False);
+#insert into customer values (11242,'maulik@gmail.com','maulik','pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e','2000-09-05',3434,null, False);
 
 
 ###### CSP
@@ -307,6 +312,7 @@ insert into offer values (4322,'Bumpper Offer',11,232323, null, False);
 insert into offer values (4323,'Super Deal Offer',5,232323, null, False);
 insert into offer values (4324,'Platinum Offer',20,4324323, null, False);
 insert into offer values (4325,'Gold Bang Offer',15,4324323, null, False);
+insert into offer values (4326,'Welcome Offer',10,12121, null, False);
 
 ##### Bill
 insert into bill values (0001,5000,1234,12121,11224,'01','2000', False, null);
@@ -351,7 +357,7 @@ create definer=`root`@`localhost` procedure `sp_create_customer`(
 in sp_email_id varchar(255),
 in sp_name varchar(255),
 in sp_password varchar(255),
-in sp_bank_account_number int,
+in sp_bank_account_number bigint,
 in sp_ca_id int
 )
 begin
@@ -383,7 +389,7 @@ create definer=`root`@`localhost` procedure `sp_create_csp`(
 in c_email_id varchar(200),
 in c_name varchar(200),
 in c_password varchar(200),
-in c_bank_account_number int,
+in c_bank_account_number bigint,
 in c_ca_id int
 )
 begin
@@ -412,7 +418,7 @@ create definer=`root`@`localhost` procedure `sp_create_ca`(
 in ca_email_id varchar(200),
 in ca_name varchar(200),
 in ca_password varchar(200),
-in ca_bank_account_number int
+in ca_bank_account_number bigint
 )
 begin
 
@@ -630,7 +636,7 @@ create definer=`root`@`localhost` procedure `sp_update_ca`(
     in sp_email_id varchar(255) ,
     in sp_name varchar(255) ,
     in sp_password varchar(255),
-    in sp_bank_account_number int
+    in sp_bank_account_number bigint
 )
 begin
     if (select exists (select 1 from ca where ca_id = sp_id)) then
@@ -649,7 +655,7 @@ create definer=`root`@`localhost` procedure `sp_update_csp`(
     in sp_email_id varchar(255) ,
     in sp_name varchar(255) ,
     in sp_password varchar(255),
-    in sp_bank_account_number int
+    in sp_bank_account_number bigint
 )
 begin
     if (select exists (select 1 from csp where csp_id = sp_id)) then
@@ -667,10 +673,77 @@ create definer=`root`@`localhost` procedure `sp_update_customer`(
     in sp_email_id varchar(255) ,
     in sp_name varchar(255) ,
     in sp_password varchar(255),
-    in sp_bank_account_number int 	)
+    in sp_bank_account_number bigint)
 begin
     if (select exists (select 1 from customer where customer_id = sp_id)) then
         update customer set customer_name = sp_name, customer_email_id = sp_email_id, customer_password = sp_password, customer_bank_account = sp_bank_account_number where customer_id = sp_id;
+	else
+        select 'Not enough resources available!!';
+    end if;
+end$$ delimiter ;
+
+# Update order_id in machines after deleting customers
+DROP TRIGGER IF EXISTS `multicloud`.`customer_AFTER_UPDATE`;
+DELIMITER $$
+CREATE DEFINER = CURRENT_USER TRIGGER `multicloud`.`customer_AFTER_UPDATE` AFTER UPDATE ON `customer` FOR EACH ROW
+BEGIN
+update order_
+set order_end_date = curdate()
+where customer_id = new.customer_id;
+
+SET SQL_SAFE_UPDATES = 0;
+
+update order_,machine
+set machine.order_id = null
+where machine.order_id = order_.order_id and 
+customer_id = new.customer_id;
+
+ SET SQL_SAFE_UPDATES = 1;
+
+END$$
+DELIMITER ;
+
+# Add Welcome Offer Trigger
+DELIMITER $$
+DROP TRIGGER IF EXISTS `multicloud`.`customer_AFTER_INSERT` $$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `multicloud`.`customer_BEFORE_INSERT`;
+
+DELIMITER $$
+USE `multicloud`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `multicloud`.`customer_BEFORE_INSERT` BEFORE INSERT ON `customer` FOR EACH ROW
+BEGIN
+SET new.customer_offer_id = '4326';
+END$$
+DELIMITER ;
+
+###### Stored Procedure to update customer delimiter $$
+delimiter $$
+use multicloud $$
+create definer=`root`@`localhost` procedure `sp_update_customer_admin`(
+    in sp_id int,
+    in sp_email_id varchar(255) ,
+    in sp_name varchar(255) ,
+    in sp_bank_account_number bigint,
+ 	in sp_offer_id int )
+begin
+    if (select exists (select 1 from customer where customer_id = sp_id)) then
+        update customer set customer_name = sp_name, customer_email_id = sp_email_id, customer_bank_account = sp_bank_account_number, customer_offer_id=sp_offer_id where customer_id = sp_id;
+	else
+        select 'Not enough resources available!!';
+    end if;
+end$$ delimiter ;
+
+###### Stored Procedure to update customer delimiter $$
+delimiter $$
+use multicloud $$
+create definer=`root`@`localhost` procedure `sp_end_order`(
+    in sp_order_id int,
+    in sp_order_id_2 int)
+begin
+    if (select exists (select 1 from order_ where order_id = sp_order_id)) then
+        update order_ set order_end_date = curdate() where order_id = sp_order_id;
+        update machine set order_id=null where order_id = sp_order_id;
 	else
         select 'Not enough resources available!!';
     end if;

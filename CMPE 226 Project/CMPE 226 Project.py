@@ -7,6 +7,7 @@ from crud import sql_select, sql_delete, sql_update, sql_insert
 from datetime import datetime
 import logging
 from logging.handlers import RotatingFileHandler
+from bson.objectid import ObjectId
 
 app = Flask(__name__)
 mysql = MySQL()
@@ -170,8 +171,7 @@ def myCustomers():
     try:
         _ca_id = request.args['inputCaId']
         if _ca_id:
-            results = {'results': sql_select('select * from customer c join onboards o on c.customer_id=o.customer_id where o.ca_id='+_ca_id)}
-            # print('select distinct * from customer c join onboards o on c.customer_id=o.customer_id')
+            results = {'results': sql_select('select * from customer c join onboards o on c.customer_id=o.customer_id where c.customer_isDelete=0 and o.ca_id='+_ca_id)}
             app.logger.debug("In myCustomers API, retrieved customers's for given ca:", results)
             return json.dumps(results)
         else:
@@ -189,8 +189,8 @@ def currentOrders():
         _role = request.args['inputRole']
         _ca_id = request.args['inputCaId']
         if _id and _ca_id and _role == "customer":
-            results = {'results': sql_select(
-                'select * from order_customer where customer_id="' + _id + '" and ca_id="' + _ca_id + '" and order_end_date is null')}
+            print('select * from order_customer where customer_id="' + _id + '" and ca_id="' + _ca_id + '" and order_end_date is null')
+            results = {'results': sql_select('select * from order_customer where customer_id="' + _id + '" and ca_id="' + _ca_id + '" and order_end_date is null')}
             app.logger.debug("In currentOrders API, retrieved current orders of customer:", results)
             return json.dumps(results)
         elif _id and _ca_id and _role == "csp":
@@ -247,7 +247,7 @@ def getMachines():
             app.logger.debug("In getMachines API, retrieved machines ordered by customers:", results)
             return json.dumps(results)
         elif _id and _ca_id and _role == "csp":
-            results = {'results': sql_select('select m.* from order_csp r join machine m on r.order_id=m.order_id where r.csp_id="' + _id + '" and r.ca_id="' + _ca_id + '" and order_end_date is null')}
+            results = {'results': sql_select('select m.* from machine m where m.csp_id="' + _id + '";')}
             app.logger.debug("In getMachines API, retrieved machines available with csp:", results)
             return json.dumps(results)
         elif _id and _ca_id and _role == "ca":
@@ -266,8 +266,8 @@ def getMachines():
 def current_bill():
     app.logger.info("In current_bill API, retrieving unpaid current bills for customer or ca")
     try:
-        _id = request.args['id']
-        _role = request.args['role']
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
         if _id and _role == "customer":
             results = {'results': sql_select('select * from customer_bill where customer_id="'+_id+'" and is_paid is False;')}
             app.logger.debug("In current_bill API, retrieved unpaid current bills for customer:", results)
@@ -288,8 +288,8 @@ def current_bill():
 def bill_history():
     app.logger.info("In bill_history API, retrieving paid bills history for customer or ca")
     try:
-        _id = request.args['id']
-        _role = request.args['role']
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
         if _id and _role == "customer":
             results = {'results': sql_select('select * from customer_bill where customer_id="'+_id+'" and is_paid is True;')}
             app.logger.debug("In bill_history API, retrieved paid bills history for customer:", results)
@@ -309,8 +309,8 @@ def bill_history():
 def current_revenue():
     app.logger.info("In current_revenue API, retrieving revenue for csp or ca")
     try:
-        _id = request.args['id']
-        _role = request.args['role']
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
         if _id and _role == "ca":
             results = {'results': sql_select('select * from customer_bill where ca_id="'+_id+'" and is_paid is False;')}
             app.logger.debug("In current_revenue API, retrieved revenue for ca:", results)
@@ -331,8 +331,8 @@ def current_revenue():
 def revenue_history():
     app.logger.info("In revenue_history API, retrieving revenue history for csp or ca")
     try:
-        _id = request.args['id']
-        _role = request.args['role']
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
         if _id and _role == "ca":
             results = {'results': sql_select('select * from customer_bill where ca_id="' + _id + '" and is_paid is True;')}
             app.logger.debug("In revenue_history API, retrieved revenue history for ca:", results)
@@ -353,13 +353,13 @@ def revenue_history():
 def generate_bill():
     app.logger.info("In generate_bill API, generating bills for ca or customer")
     try:
-        _id = request.args['id']
-        _role = request.args['role']
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
         conn = mysql.connect()
         cursor = conn.cursor()
         messages = []
         if _id and _role == "ca":
-            # p rint(_id, _role)
+            # print(_id, _role)
             for ca_id, customer_id in sql_select('select order_.ca_id, order_.customer_id from onboards join order_ on order_.customer_id = onboards.customer_id and order_.ca_id = onboards.ca_id where order_.ca_id="' + _id + '";'):
                 # print("Generating bill for customer_id:", customer_id)
                 cursor.callproc('sp_generate_bill_ca', (datetime.now().day, datetime.now().month, datetime.now().year, ca_id, customer_id))
@@ -394,13 +394,13 @@ def generate_bill():
         app.logger.error("In generate_bill API: Error:", str(e))
         return json.dumps({'error': str(e)})
 
-@app.route('/bill/pay', methods=['POST'])
+@app.route('/bill/pay', methods=['GET'])
 def pay_bill():
     app.logger.info("In pay_bill API, paying current bills of customer or ca")
     try:
-        _id = request.args['id']
-        _role = request.args['role']
-        _bill_id = request.args['bill_id']
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
+        _bill_id = request.args['inputBillId']
         if _id and _role == "customer":
             sql_update('update bill set is_paid = True where customer_id=' + id + 'and bill_id=' + _bill_id + ' and is_paid = False;')
             results = {'results':"Bill:"+str(_bill_id)+"is paid by customer:"+str(_id)}
@@ -456,7 +456,7 @@ def login():
                 return json.dumps({'error': 'Invalid password'}), 500
         else:
             app.logger.debug("In login API: Missing mandatory parameters")
-            return json.dumps({"results": "Missing mandatory parameters"})
+            return json.dumps({"results": "Missing mandatory parameters"}), 500
     except Exception as e:
         app.logger.error("In login API: Error:", str(e))
         return json.dumps({'error': str(e)})
@@ -522,7 +522,7 @@ def signUp():
                 else:
                     results = {'message': "User already exists!"}
                     app.logger.debug("In signup API : Error:", results)
-                    return json.dumps(results)
+                    return json.dumps(results), 500
             elif _role == 'csp':
                 cursor.callproc('sp_create_csp', (_email, _name, _hashed_password, _bank_account_number, _ca_id))
                 data = cursor.fetchall()
@@ -533,7 +533,7 @@ def signUp():
                 else:
                     results = {'message': "Csp already exists!"}
                     app.logger.debug("In signup API : Error:", results)
-                    return json.dumps(results)
+                    return json.dumps(results), 500
             elif _role == 'ca':
                 cursor.callproc('sp_create_ca', (_email, _name, _hashed_password, _bank_account_number))
                 data = cursor.fetchall()
@@ -544,7 +544,7 @@ def signUp():
                 else:
                     results = {'message': "ca already exists!"}
                     app.logger.debug("In signup API : Error:", results)
-                    return json.dumps(results)
+                    return json.dumps(results), 500
             else:
                 app.logger.debug("In signup API: Missing mandatory parameters")
                 return json.dumps({"results": "Missing mandatory parameters"})
@@ -583,6 +583,7 @@ def updateProfile():
                     app.logger.debug("In updateProfile API : Error:", results, data[0])
                     return json.dumps(results)
             elif _role == 'customer':
+                print(request.form)
                 cursor.callproc('sp_update_customer', (_id, _email, _name, _hashed_password, _bank_account_number))
                 data = cursor.fetchall()
                 if len(data) is 0:
@@ -613,21 +614,46 @@ def updateProfile():
         app.logger.error("In updateProfile API: Error:", str(e))
         return json.dumps({'error': str(e)})
 
+@app.route('/updateCustomerProfile', methods = ['POST'])
+def updateCustomerProfile():
+    try:
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
+        _name = request.form['inputName']
+        _email = request.form['inputEmail']
+        _bank_account_number = request.form['inputBankAccount']
+        _offer_id = request.form['inputOfferId']
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        if _id and _role:
+            if _role == 'customer':
+                cursor.callproc('sp_update_customer_admin', (_id, _email, _name, _bank_account_number, _offer_id))
+                data = cursor.fetchall()
+                if len(data) is 0:
+                    conn.commit()
+                    return json.dumps({'results': {"_name": _name, "_bank_account_number": _bank_account_number}})
+                else:
+                    return json.dumps({'error': str(data[0])})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
 @app.route('/help', methods=['POST'])
 def help():
     app.logger.info("In myCSPs API, retrieving csp's for given ca")
     try:
-        email = request.args['email']
-        role = request.args['role']
-        problem_title = request.form['problemTitle']
-        problem_description = request.form['problemDescription']
-        if email and role and problem_title and problem_description:
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
+        _problem_title = request.form['inputProblemTitle']
+        _problem_description = request.form['inputProblemDescription']
+        if _id and _role and _problem_title and _problem_description:
             record = {
-                "email": email,
-                "role": role,
-                "problem_title": problem_title,
-                "problem_description": problem_description,
-                "date": datetime.datetime.utcnow(),
+                "id": _id,
+                "role": _role,
+                "problem_title": _problem_title,
+                "problem_description": _problem_description,
+                "date": datetime.utcnow(),
                 "resolved": "no"
             }
             tickets = mongodb.tickets
@@ -647,11 +673,11 @@ def get_tickets():
     app.logger.info("In myCSPs API, retrieving csp's for given ca")
     try:
         tickets_array = []
-        email = request.args['email']
-        role = request.args['role']
-        if email and role:
+        id = request.args['inputId']
+        role = request.args['inputRole']
+        if id and role != "ca":
             tickets = mongodb.tickets
-            user_tickets = tickets.find({"email":email, "role": role})
+            user_tickets = tickets.find({"id":id, "role": role})
             for ticket in user_tickets:
                 # print(dict(ticket))
                 temp = dict()
@@ -662,6 +688,30 @@ def get_tickets():
                         temp[key] = str(ticket[key])
                 tickets_array.append(temp)
             return jsonify({"result":tickets_array})
+        elif role == "ca":
+            tickets = mongodb.tickets
+            user_tickets = tickets.find()
+            for ticket in user_tickets:
+                temp = dict()
+                for key in ticket:
+                    if key != '_id':
+                        temp[key] = ticket[key]
+                    else:
+                        temp[key] = str(ticket[key])
+                tickets_array.append(temp)
+            return jsonify({"result":tickets_array})
+        else:
+            return json.dumps({'error': 'Enter required fields'}), 500
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/resolveIssue', methods=['GET'])
+def resolveIssue():
+    try:
+        _id = request.args['inputIssueId']
+        if _id:
+            mongodb.tickets.update({'_id': ObjectId(_id)}, {'$set': {"resolved": "yes"}}, upsert=False)
+            return json.dumps({'msg': 'Issue resolved'})
         else:
             app.logger.debug("In current_revenue API: Missing mandatory parameters")
             return json.dumps({"results": "Missing mandatory parameters"})
@@ -686,25 +736,9 @@ def createOffer():
         app.logger.error("In current_revenue API: Error:", str(e))
         return json.dumps({'error': str(e)})
 
-@app.route('/assignOffer', methods = ['GET'])
-def assignOffer():
-    app.logger.info("In myCSPs API, retrieving csp's for given ca")
-    try:
-        _offer_id = request.args['inputOfferId']
-        _customer_id = request.args['inputCustomerId']
-        if _offer_id and _customer_id:
-            sql_update('update customer set customer_offer_id = '+ _offer_id +' where customer_id= ' + _customer_id + ';')
-            return json.dumps({'message': 'Offer assigned successfully !'})
-        else:
-            app.logger.debug("In current_revenue API: Missing mandatory parameters")
-            return json.dumps({"results": "Missing mandatory parameters"})
-    except Exception as e:
-        app.logger.error("In current_revenue API: Error:", str(e))
-        return json.dumps({'error': str(e)})
-
 @app.route('/getOffer', methods = ['GET'])
 def getOffer():
-    app.logger.info("In myCSPs API, retrieving csp's for given ca")
+    app.logger.info("In getOffer API, retrieving csp's for given ca")
     try:
         _ca_id = request.args['inputCaId']
         _customer_id = request.args['inputId']
@@ -713,13 +747,74 @@ def getOffer():
             if _role == 'ca':
                 return json.dumps({'results': sql_select('select * from offer where ca_id = '+ _ca_id +';')})
             if _role == 'customer':
-                print('select * from customer c join offer o on c.customer_offer_id=o.offer_id where  c.customer_id = '+ _customer_id +';')
                 return json.dumps({'results': sql_select('select * from customer c join offer o on c.customer_offer_id=o.offer_id where  c.customer_id = '+ _customer_id +';')})
         else:
-            app.logger.debug("In current_revenue API: Missing mandatory parameters")
+            app.logger.debug("In getOffer API: Missing mandatory parameters")
             return json.dumps({"results": "Missing mandatory parameters"})
     except Exception as e:
         app.logger.error("In current_revenue API: Error:", str(e))
+        return json.dumps({'error': str(e)})
+
+@app.route('/deleteOffer', methods = ['DELETE'])
+def deleteOffer():
+    try:
+        _offer_id = request.args['offerId']
+        if _offer_id:
+            return json.dumps({'results': sql_delete('delete from offer where offer_id = '+ _offer_id +';')})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/endOrder', methods = ['GET'])
+def endOrder():
+    try:
+        _order_id = request.args['orderId']
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        if _order_id:
+            cursor.callproc('sp_end_order', (_order_id, _order_id))
+            data = cursor.fetchall()
+            if len(data) is 0:
+                conn.commit()
+                return json.dumps({'html': '<span>Order Ended</span>'})
+            else:
+                return json.dumps({'error': str(data[0])})
+        else:
+            return json.dumps({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/addMachine', methods = ['POST'])
+def addMachine():
+    print(request.form)
+    try:
+        _csp_id = request.args['inputId']
+        _ip_address = request.form['inputIpAddress']
+        _ram = request.form['inputRam']
+        _disk_size = request.form['inputDiskSize']
+        _price = request.form['inputPrice']
+        _cpu_cores = request.form['inputCpuCores']
+        sql_insert('insert into machine (csp_id, disk_size, ram, cpu_cores, ip_address, price, order_id ) values ( "'+ _csp_id +'", "' + _disk_size + '", '+_ram+', '+_cpu_cores+', "'+_ip_address+'", '+_price+',null);')
+        return json.dumps({'message': 'Machine created successfully !'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+
+@app.route('/deleteMachine', methods = ['DELETE'])
+def deleteMachine():
+    try:
+        _mac_id = request.args['inputId']
+        if _mac_id:
+            return json.dumps({'results': sql_delete('delete from machine where mac_id = '+ _mac_id +';')})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
+@app.route('/deleteCustomer', methods = ['DELETE'])
+def deleteCustomer():
+    try:
+        _customer_id = request.args['inputId']
+        if _customer_id:
+            return json.dumps({'results': sql_delete('update customer set customer_isDelete=true where customer_id = '+ _customer_id +';')})
+    except Exception as e:
         return json.dumps({'error': str(e)})
 
 if __name__ == '__main__':
