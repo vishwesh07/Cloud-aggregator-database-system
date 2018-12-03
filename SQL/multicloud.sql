@@ -1,4 +1,3 @@
-SET GLOBAL general_log = 'ON';
 drop database if exists multicloud;
 create database multicloud;
 use multicloud;
@@ -64,7 +63,6 @@ create table bill
   month int not null,
   year int not null,
   is_paid bool default False,
-  offer_id int default null,
   primary key(bill_id)
 );
 
@@ -136,53 +134,28 @@ create view order_customer as select order_id, order_date, number_of_machines, c
 create view order_csp as select ord.order_id, ord.order_date, ord.number_of_machines, ord.ca_id, r.csp_id, ord.cpu_cores, ord.ram, ord.disk_size, ord.order_end_date, ord.order_cost
 from order_ ord, receives r where ord.order_id=r.order_id;
 create view machine_customer as select mac_id, disk_size, ram, cpu_cores, ip_address, order_id from machine;
+
 create view customer_bill as select bill_id, customer_id, ca_id, month, year, bill_amount, is_paid from bill where csp_id is null;
 create view ca_bill as select bill_id, ca_id, csp_id, month, year, bill_amount, is_paid from bill where customer_id is null;
 
 alter table order_ add constraint fk_order_ca_id foreign key (ca_id) references ca(ca_id) ;
 alter table order_ add constraint fk_order_customer_id foreign key (customer_id) references customer(customer_id);
 
-######alter table bill add csp_id int not null;
-######alter table bill add ca_id int not null;
-######alter table bill add customer_id int not null;
+
 alter table bill add constraint fk_bill_csp_id foreign key (csp_id) references csp(csp_id);
 alter table bill add constraint fk_bill_ca_id foreign key (ca_id) references ca(ca_id);
 alter table bill add constraint fk_bill_cust_id foreign key (customer_id ) references customer(customer_id);
-
 alter table machine add constraint fk_machine_csp_id foreign key (csp_id) references csp(csp_id);
 alter table machine add constraint fk_machine_order_id foreign key (order_id) references order_(order_id);
-
 alter table receives add constraint fk_receives_csp_id foreign key (csp_id) references csp(csp_id);
 alter table receives add constraint fk_receives_order_id foreign key (order_id) references order_(order_id);
-
 alter table onboards add constraint fk_onboards_ca_id foreign key (ca_id) references ca(ca_id);
 alter table onboards add constraint fk_onboards_customer_id foreign key (customer_id) references customer(customer_id);
-
-
-#####alter table order_ add bill_id int not null;
-#####alter table order_ add cpu_cores int not null;
-#####alter table order_ add ram int not null;
-#####alter table order_ add disk_size int not null;
-#####alter table order_ add order_end_date date not null;
-
-#####alter table customer add customer_offer_id int;
 alter table customer add constraint fk_customer_offer_id foreign key (customer_offer_id)  references offer(offer_id) on delete set null;
-#####alter table customer drop foreign key fk_customer_offer_id;
-
-######alter table bill add month int not null;
-######alter table bill add year int not null;
-######alter table bill add offer_id int not null;
-
-######alter table offer add rebate int not null;
-######alter table offer add ca_id int not null;
 alter table offer add constraint fk_offer_ca_id foreign key (ca_id) references ca(ca_id);
-
-########alter table machine add price int not null;
-
-########alter table receives add quantity int not null;
 alter table csp_contracts add constraint fk_csp_contracts_csp_id foreign key (csp_id) references csp(csp_id);
 alter table csp_contracts add constraint fk_csp_contracts_ca_id foreign key (ca_id) references ca(ca_id);
-create index machine_index on machine (price, ram, cpu_cores, disk_size);
+
 
 ###### Ca
 insert into ca values(12121,'abah@gmail.com','khas', 132121, 'pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e');
@@ -222,12 +195,22 @@ insert into machine values(1334155,1234,'2TB',8,8,'123.65.251.12',450,null);
 insert into machine values(1334156,1234,'2TB',8,4,'123.65.252.12',4500,null);
 insert into machine values(1334157,1234,'2TB',8,4,'123.65.253.12',450000,null);
 
+insert into machine values(1334158,1234,'4TB',4,8,'123.65.254.53',150,null);
+insert into machine values(1334159,1234,'6TB',8,8,'123.65.251.12',420,null);
+insert into machine values(1334160,1234,'8TB',8,4,'123.65.252.12',3500,null);
+insert into machine values(1334161,1234,'2TB',8,4,'123.65.253.12',450000,null);
+
 #Google
 insert into machine values(1234151,1235,'1TB',4,4,'123.65.254.22',545,null);
 insert into machine values(1134151,1235,'1TB',4,4,'123.65.254.32',145,null);
 insert into machine values(13134151,1235,'2TB',4,4,'123.65.254.42',2345,null);
 insert into machine values(134151,1235,'2TB',8,2,'123.65.254.52',450,null);
 insert into machine values(1354151,1235,'2TB',8,2,'123.65.254.62',45000,null);
+
+insert into machine values(131341551,1235,'2TB',4,4,'123.65.254.42',2345,null);
+insert into machine values(13415154,1235,'6TB',8,2,'123.65.254.52',450,null);
+insert into machine values(13541571,1235,'8TB',8,2,'123.65.254.62',45000,null);
+
 
 #vCloud
 insert into machine values(1114151,12361,'1TB',4,4,'121.65.254.12',100,null);
@@ -279,6 +262,9 @@ insert into csp_contracts values(4324323,12362);
 insert into csp_contracts values(123,12363);
 insert into csp_contracts values(4324323,12364);
 
+
+
+
 ###### Onboards
 insert into onboards values (12121,11224);
 insert into onboards values (12121,11225);
@@ -310,21 +296,21 @@ insert into offer values (4322,'Bumpper Offer',11,232323, null, False);
 insert into offer values (4323,'Super Deal Offer',5,232323, null, False);
 insert into offer values (4324,'Platinum Offer',20,4324323, null, False);
 insert into offer values (4325,'Gold Bang Offer',15,4324323, null, False);
-insert into offer values (4326,'Welcome Offer',10,12121, null, False);
+insert into offer values (4326,'Welcome Offer',10,123, null, False);
 
 ##### Bill
-insert into bill values (0001,5000,1234,12121,11224,'01','2000', False, null);
-insert into bill values (0002,1000,12361,12121,11227,'01','2000', False, null);
-insert into bill values (0003,2000,12364,12121,11220,'01','2000', False, null);
+insert into bill values (0001,5000,1234,123,11224,'01','2000', False);
+insert into bill values (0002,1000,12361,123,11227,'01','2000', False);
+insert into bill values (0003,2000,12364,123,11220,'01','2000', False);
 
 
-insert into bill values (1004,3000,1235,232323,11225,'02','2000', False, null);
-insert into bill values (1005,53000,12362,232323,11228,'03','2000', False, null);
-insert into bill values (1006,51000,1236,232323,11241,'01','2000', False, null);
+insert into bill values (1004,3000,1235,232323,11225,'02','2000', False);
+insert into bill values (1005,53000,12362,232323,11228,'03','2000', False);
+insert into bill values (1006,51000,1236,232323,11241,'01','2000', False);
 
-insert into bill values (2004,4000,1236,4324323,11226,'07','2000', False, null);
-insert into bill values (2005,43000,12364,4324323,11229,'08','2000', False, null);
-insert into bill values (2006,41000,1235,4324323,11241,'09','2000', False, null);
+insert into bill values (2004,4000,1236,4324323,11226,'07','2000', False);
+insert into bill values (2005,43000,12364,4324323,11229,'08','2000', False);
+insert into bill values (2006,41000,1235,4324323,11241,'09','2000', False);
 
 ##### Order
 insert into order_ values(0010,'2000-02-01',5,12121,11224,16,16,"1TB",'2000-10-10', 40, 30);
@@ -337,7 +323,8 @@ insert into order_ values(1012,'2000-02-01',5,4324323,11229,8,16,"2TB",'2000-10-
 
 insert into order_ values(2011,'2000-01-01',5,12121,11220,8,16,"2TB",'2000-10-10', 70, 60);
 insert into order_ values(2012,'2000-11-01',15,4324323,11241,8,16,"1TB",'2001-10-10', 70, 30);
-insert into order_ values(2013,'2000-01-01',5,4324323,11229,8,16,"2TB",'2000-10-10', 25, 20);
+insert into order_ values(2013,'2000-01-01',5,4324323,11229,8,16,"2TB",null, 25, 20);
+
 
 ##### Receives
 insert into receives values(1234,0010,5,30);
