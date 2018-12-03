@@ -203,12 +203,12 @@ def getMachines():
 @app.route('/bill/current', methods=['GET'])
 def current_bill():
     try:
-        _id = request.args['id']
-        _role = request.args['role']
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
         if _id and _role == "customer":
-            # print('select * from customer_bill where customer_id="'+_id+'"')
             return json.dumps({'results': sql_select('select * from customer_bill where customer_id="'+_id+'" and is_paid is False;')})
         elif _id and _role == "ca":
+            print('select * from ca_bill where ca_id="' + _id + '" and is_paid is False;')
             return json.dumps({'results': sql_select('select * from ca_bill where ca_id="' + _id + '" and is_paid is False;')})
         else:
             return json.dumps({'html': '<span>Enter the required fields</span>'})
@@ -218,8 +218,8 @@ def current_bill():
 @app.route('/bill/history', methods=['GET'])
 def bill_history():
     try:
-        _id = request.args['id']
-        _role = request.args['role']
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
         if _id and _role == "customer":
             return json.dumps({'results': sql_select('select * from customer_bill where customer_id="'+_id+'" and is_paid is True;')})
         elif _id and _role == "ca":
@@ -232,8 +232,8 @@ def bill_history():
 @app.route('/revenue/current', methods=['GET'])
 def current_revenue():
     try:
-        _id = request.args['id']
-        _role = request.args['role']
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
         if _id and _role == "ca":
             # print('select * from customer_bill where customer_id="'+_id+'"')
             return json.dumps({'results': sql_select('select * from customer_bill where ca_id="'+_id+'" and is_paid is False;')})
@@ -247,8 +247,8 @@ def current_revenue():
 @app.route('/revenue/history', methods=['GET'])
 def revenue_history():
     try:
-        _id = request.args['id']
-        _role = request.args['role']
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
         if _id and _role == "ca":
             # print('select * from customer_bill where customer_id="'+_id+'"')
             return json.dumps(
@@ -264,8 +264,8 @@ def revenue_history():
 @app.route('/bill/generate', methods=['GET'])
 def generate_bill():
     try:
-        _id = request.args['id']
-        _role = request.args['role']
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
         conn = mysql.connect()
         cursor = conn.cursor()
         messages = []
@@ -299,17 +299,17 @@ def generate_bill():
     except Exception as e:
         return json.dumps({'error':str(e)})
 
-@app.route('/bill/pay', methods=['POST'])
+@app.route('/bill/pay', methods=['GET'])
 def pay_bill():
     try:
-        _id = request.args['id']
-        _role = request.args['role']
-        _bill_id = request.args['bill_id']
+        _id = request.args['inputId']
+        _role = request.args['inputRole']
+        _bill_id = request.args['inputBillId']
         if _id and _role == "customer":
-            sql_update('update bill set is_paid = True where customer_id=' + id + 'and bill_id=' + _bill_id + ' and is_paid = False;')
+            sql_update('update bill set is_paid = True where customer_id=' + _id + ' and bill_id=' + _bill_id + ' and is_paid is False;')
             return json.dumps({'results':"Bill:"+str(_bill_id)+"is paid by customer:"+str(_id)})
         elif _id and _role == "ca":
-            sql_update('update bill set is_paid = True where ca_id=' + id + 'and bill_id=' + _bill_id + ' and is_paid = False;')
+            sql_update('update bill set is_paid = True where ca_id=' + _id + ' and bill_id=' + _bill_id + ' and is_paid is False;')
             return json.dumps({'results': "Bill:" + str(_bill_id) + "is paid by ca:" + str(_id)})
     except Exception as e:
         return json.dumps({'error': str(e)})
