@@ -21,6 +21,7 @@ $(function() {
                 sessionStorage.setItem("password", responseParsed.results._hashed_password);
                 sessionStorage.setItem("passwordOriginal", responseParsed.results._password);
                 $(".updateSuccess").show();
+                location.reload();
             },
             error: function(error) {
                 console.log(error);

@@ -25,6 +25,7 @@ $(function() {
             type: 'POST',
             success: function(response) {
                 $(".ticketSuccess").show();
+                location.reload();
                 console.log(response);
             },
             error: function(error) {

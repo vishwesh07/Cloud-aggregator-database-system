@@ -5,6 +5,7 @@ $(function() {
             type: 'GET',
             success: function(response) {
                 $(".generateBillSuccess").show();
+                location.reload();
                 console.log(response);
             },
             error: function(error) {
@@ -94,6 +95,7 @@ $(function() {
             url: '/bill/pay?inputId='+sessionStorage.getItem("id")+'&inputRole='+sessionStorage.getItem("role")+'&inputBillId='+x,
             type: 'GET',
             success: function(response) {
+                location.reload();
                 console.log(response);
             },
             error: function(error) {

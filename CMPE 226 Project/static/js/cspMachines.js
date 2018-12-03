@@ -27,6 +27,7 @@ $(function() {
             type: 'POST',
             success: function(response) {
                 console.log(response);
+                location.reload();
             },
             error: function(error) {
                 console.log(error);
@@ -39,6 +40,7 @@ $(function() {
             type: 'DELETE',
             success: function(response) {
                 console.log(response);
+                location.reload();
             },
             error: function(error) {
                 console.log(error);

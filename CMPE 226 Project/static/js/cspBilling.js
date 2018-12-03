@@ -5,6 +5,7 @@ $(function() {
             type: 'GET',
             success: function(response) {
                 $(".generateBillSuccess").show();
+                location.reload();
                 console.log(response);
             },
             error: function(error) {

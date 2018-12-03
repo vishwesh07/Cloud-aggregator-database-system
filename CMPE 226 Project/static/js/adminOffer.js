@@ -26,15 +26,7 @@ $(function() {
             data: $('.newOfferForm').serialize(),
             type: 'POST',
             success: function(response) {
-                var orderList = JSON.parse(response).results;
-                var $ul = $('.currentOrders').append(
-                  orderList.map(order =>
-                    $("<tr>").append($("<td>").text(order[0]))
-                        .append($("<td>").text(order[1])).append($("<td>").text(order[2]))
-                        .append($("<td>").text(order[5])).append($("<td>").text(order[6]))
-                        .append($("<td>").text(order[7])).append($("<td>").text(order[8]))
-                  )
-                );
+                location.reload();
             },
             error: function(error) {
                 console.log(error);
@@ -49,7 +41,7 @@ $(function() {
             url: '/deleteOffer?offerId='+ x,
             type: 'DELETE',
             success: function(response) {
-                var orderList = JSON.parse(response).results;
+                location.reload();
             },
             error: function(error) {
                 console.log(error);
