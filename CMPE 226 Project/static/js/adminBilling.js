@@ -69,7 +69,7 @@ $(function() {
             }
         });
         $.ajax({
-            url: '/revenue/current?inputId='+sessionStorage.getItem("id")+'&inputCaId='+sessionStorage.getItem("ca_id")+'&inputRole='+sessionStorage.getItem("role"),
+            url: '/revenue/history?inputId='+sessionStorage.getItem("id")+'&inputCaId='+sessionStorage.getItem("ca_id")+'&inputRole='+sessionStorage.getItem("role"),
             data: $('form').serialize(),
             type: 'GET',
             success: function(response) {
