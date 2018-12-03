@@ -1,3 +1,4 @@
+SET GLOBAL general_log = 'ON';
 drop database if exists multicloud;
 create database multicloud;
 use multicloud;
@@ -181,7 +182,7 @@ alter table offer add constraint fk_offer_ca_id foreign key (ca_id) references c
 ########alter table receives add quantity int not null;
 alter table csp_contracts add constraint fk_csp_contracts_csp_id foreign key (csp_id) references csp(csp_id);
 alter table csp_contracts add constraint fk_csp_contracts_ca_id foreign key (ca_id) references ca(ca_id);
-
+create index machine_index on machine (price, ram, cpu_cores, disk_size);
 
 ###### Ca
 insert into ca values(12121,'abah@gmail.com','khas', 132121, 'pbkdf2:sha256:50000$PJ8gdds4$21c76a7ebbe9fd90740db011db11d1945c9806ff5b312a49ee362f9cc423416e');
