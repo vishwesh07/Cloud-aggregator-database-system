@@ -646,5 +646,14 @@ def deleteMachine():
     except Exception as e:
         return json.dumps({'error': str(e)})
 
+@app.route('/deleteCustomer', methods = ['DELETE'])
+def deleteCustomer():
+    try:
+        _customer_id = request.args['inputId']
+        if _customer_id:
+            return json.dumps({'results': sql_delete('update customer set customer_isDelete=true where customer_id = '+ _customer_id +';')})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -10,7 +10,7 @@ $(function() {
                       $("<tr>").append($("<td class='customerId'>").text(order[0]))
                           .append($("<td class='customerEmail'>").text(order[1])).append($("<td class='customerName'>").text(order[2]))
                           .append($("<td>").text(order[4])).append($("<td class='customerBankAccount'>").text(order[5]))
-                          .append($("<td>").append($('<button type="button" class="btn-sm btn-danger">Delete</button>')))
+                          .append($("<td>").append($('<button type="button" class="btn-sm btn-danger deletCust">Delete</button>')))
                           .append($("<td class='customerOfferId'>").append(order[6])).append($("<td>").append($('<button type="button" class="btn-sm btn-info assignOffer" data-toggle="modal" data-target="#myModal">Update</button>')))
                   )
                 );
@@ -27,6 +27,20 @@ $(function() {
         $("#inputEmail").val($(this).parent().siblings(".customerEmail").text());
         $("#inputBankAccount").val($(this).parent().siblings(".customerBankAccount").text());
         $("#inputOfferId").val($(this).parent().siblings(".customerOfferId").text());
+    });
+
+    $('body').on('click', '.deletCust', function(e) {
+        var x = $(this).parent().siblings(".customerId").text();
+        $.ajax({
+            url: '/deleteCustomer?inputRole=customer&inputId='+x,
+            type: 'DELETE',
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
     });
 
     $('.updateProfile').click(function() {
