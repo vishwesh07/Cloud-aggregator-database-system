@@ -12,10 +12,10 @@ It purchases cloud from different CSPs (Cloud Service Providers) - Amazon AWS, M
 5. Install python 3.6, flask, flask-mysql, pymongo, werkzeug 
 6. Start application by `sudo python3 "CMPE 226 Project.py"`
 
-<img src="https://github.com/bhattmaulik1991/CMPE257-ImageClassifier_CNN/blob/master/2.png" />
+<img src="https://github.com/bhattmaulik1991/cmpe226project2/blob/master/2.png" />
 
 ## Architecture
 
 This is 3 tier architecture. Request comes from UI server hits backend server. Backend server performs database query and returns response to UI.
 
-<img src="https://github.com/bhattmaulik1991/CMPE257-ImageClassifier_CNN/blob/master/1.png" />
+<img src="https://github.com/bhattmaulik1991/cmpe226project2/blob/master/1.png" />
